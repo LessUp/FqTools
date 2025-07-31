@@ -1,0 +1,67 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile.dev",
+    "context": "..",
+    "target": "development"
+  },
+  
+  "forwardPorts": [8080],
+  
+  "containerEnv": {
+    "CC": "clang-17",
+    "CXX": "clang++-17",
+    "CONAN_HOME": "/home/developer/.conan2",
+    "CCACHE_DIR": "/home/developer/.ccache"
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "cmake.cmakePath": "/usr/bin/cmake",
+        "cmake.generator": "Ninja",
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cmake.configureArgs": [
+          "-DCMAKE_BUILD_TYPE=Debug",
+          "-DENABLE_COVERAGE=ON",
+          "-DBUILD_TESTING=ON"
+        ],
+        "cmake.buildArgs": [],
+        "cmake.parallelJobs": 4,
+        "C_Cpp.clang_format_path": "/usr/bin/clang-format-17",
+        "C_Cpp.default.clang_format_path": "/usr/bin/clang-format-17",
+        "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [80, 100],
+        "files.associations": {
+          "*.cpp": "cpp",
+          "*.h": "cpp",
+          "*.hpp": "cpp",
+          "*.cc": "cpp",
+          "*.cxx": "cpp",
+          "*.c": "c",
+          "*.h": "c"
+        },
+        "search.exclude": {
+          "**/build": true,
+          "**/.conan2": true,
+          "**/.ccache": true,
+          "**/.git": true,
+          "**/node_modules": true
+        }
+      },
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-vscode.cpptools-extension-pack",
+        "twxs.cmake",
+        "vector-of-bool.cmake-tools-helper",
+        "ms-python.python",
+        "eamodio.gitlens",
+        "GitHub.copilot"
+      ]
+    }
+  },
+
+  "postCreateCommand": "bash /workspace/scripts/dev-container-setup.sh"
+}

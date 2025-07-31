@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # 开发环境
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+      target: development
+    container_name: fastqtools-dev
+    volumes:
+      - ..:/workspace:cached
+      - ~/.ssh:/home/developer/.ssh:ro
+      - ~/.gitconfig:/home/developer/.gitconfig:ro
+      - ~/.conan2:/home/developer/.conan2:cached
+      - ~/.ccache:/home/developer/.ccache:cached
+    environment:
+      - DISPLAY=${DISPLAY}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    working_dir: /workspace
+
+  # 生产环境
+  prod:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.prod
+      target: production
+    container_name: fastqtools-prod
+    volumes:
+      - ./data:/app/data:ro
+      - ./output:/app/output
+    environment:
+      - FASTQTOOLS_DATA_DIR=/app/data
+      - FASTQTOOLS_OUTPUT_DIR=/app/output
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  # 测试环境
+  test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+      target: development
+    container_name: fastqtools-test
+    volumes:
+      - ..:/workspace:cached
+      - ~/.conan2:/home/developer/.conan2:cached
+      - ~/.ccache:/home/developer/.ccache:cached
+    environment:
+      - BUILD_TYPE=Debug
+      - ENABLE_COVERAGE=ON
+    command: /workspace/scripts/test.sh
+    working_dir: /workspace
+
+  # 构建服务
+  build:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: build
+    container_name: fastqtools-build
+    volumes:
+      - ..:/workspace:cached
+      - ~/.conan2:/root/.conan2:cached
+      - ~/.ccache:/root/.ccache:cached
+    command: /workspace/scripts/build.sh --release
+    working_dir: /workspace
+
+volumes:
+  conan_cache:
+  ccache_cache:

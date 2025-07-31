@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)",
+      "Bash(touch:*)",
+      "Bash(ls:*)",
+      "Bash(./migrate_dependencies.sh:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(cmake --build:*)",
+      "Bash(cmake:*)",
+      "Bash(make:*)",
+      "Bash(conan install config/dependencies --build=missing)",
+      "Bash(find:*)",
+      "Bash(conan install:*)",
+      "Bash(cp ../config/dependencies/conan_toolchain.cmake .)",
+      "Bash(export:*)",
+      "Bash(ninja)",
+      "Bash(cp:*)",
+      "Bash(g++:*)",
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(./test_common_module:*)",
+      "Bash(./test_error_exceptions:*)",
+      "Bash(./test_error_handler:*)",
+      "Bash(./test_configuration:*)",
+      "Bash(./scripts/build.sh:*)",
+      "Bash(ninja:*)",
+      "Bash(./FastQTools:*)"
+    ],
+    "deny": []
+  }
+}

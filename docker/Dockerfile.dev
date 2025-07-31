@@ -1,0 +1,34 @@
+# Dockerfile for the Development Environment
+#
+# This Dockerfile creates a comprehensive development environment.
+# It inherits from the 'build' stage of the main Dockerfile
+# to ensure a consistent base toolchain, and then adds extra tools
+# needed for interactive development.
+
+# Use the 'build' stage from the main Dockerfile as our base.
+# This gives us the exact same compiler, libraries, and build tools.
+FROM build AS development
+
+# Install additional development-specific tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gdb \
+    valgrind \
+    lcov \
+    doxygen \
+    graphviz \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up a non-root user for development
+ARG USERNAME=dev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Switch to the non-root user
+USER $USERNAME
+WORKDIR /home/$USERNAME/workspace
+
+# Set a default command to start a shell
+CMD ["/bin/bash"]
