@@ -1,0 +1,178 @@
+# .github/workflows/ci.yml
+name: FastQTools CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+env:
+  CONAN_VERSION: 2.19.0
+
+jobs:
+  lint:
+    name: Code Quality and Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential wget clang-19 clang-tidy-19 clang-format-19 ninja-build
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
+          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-19 100
+          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-19 100
+
+      - name: Install Conan
+        run: |
+          pip install conan==${{ env.CONAN_VERSION }}
+          conan profile detect --force
+
+      - name: Build project for code analysis
+        run: |
+          ./scripts/build.sh clang Release
+
+      - name: Run linting script
+        run: |
+          ./scripts/lint.sh --build-dir build-clang-release
+
+      - name: Install Node.js for commitlint
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and run commitlint
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+          commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+      - name: Generate clang-tidy report
+        run: |
+          clang-tidy -p build-clang-release src/**/*.cpp src/**/*.h -export-fixes=clang-tidy-fixes.yml || true
+
+      - name: Upload clang-tidy report
+        uses: actions/upload-artifact@v3
+        with:
+          name: clang-tidy-report
+          path: clang-tidy-fixes.yml
+          retention-days: 7
+
+  build-and-test:
+    name: ${{ matrix.os }} / ${{ matrix.compiler.name }} / ${{ matrix.build_type }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        compiler:
+          - { name: gcc, cc: gcc, cxx: g++ }
+          - { name: clang, cc: clang, cxx: clang++ }
+        build_type: [Debug, Release]
+        exclude:
+          # Exclude some combinations to reduce CI time
+          - compiler: gcc
+            build_type: Debug
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential wget ninja-build
+
+      - name: Install Clang/LLVM
+        if: matrix.compiler.name == 'clang'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 19
+          sudo apt-get install -y clang-19 clang-tidy-19 clang-format-19 lld-19
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
+
+      - name: Set up Python for Conan
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Conan
+        run: |
+          pip install conan==${{ env.CONAN_VERSION }}
+          conan profile detect --force
+
+      - name: Configure Conan Profile
+        run: |
+          COMPILER_VERSION=$(${{ matrix.compiler.cxx }} -dumpversion | cut -d. -f1)
+          conan profile update settings.compiler=${{ matrix.compiler.name }} default
+          conan profile update settings.compiler.version=${COMPILER_VERSION} default
+          conan profile update settings.compiler.cppstd=20 default
+          conan profile update settings.compiler.libcxx=libstdc++11 default
+
+      - name: Run Conan Install
+        run: |
+          conan install config/dependencies/ --output-folder=build/conan-${{ matrix.build_type,, }} --build=missing -s build_type=${{ matrix.build_type }}
+
+      - name: Configure CMake
+        env:
+          CC: ${{ matrix.compiler.cc }}
+          CXX: ${{ matrix.compiler.cxx }}
+        run: |
+          cmake -B build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }} -S . \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_TOOLCHAIN_FILE=build/conan-${{ matrix.build_type,, }}/conan_toolchain.cmake
+
+      - name: Build Project
+        run: |
+          cmake --build build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }}
+
+      - name: Run Tests
+        if: matrix.build_type == 'Release'
+        working-directory: ./build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }}
+        run: ctest --output-on-failure
+
+      - name: Upload build artifacts
+        if: matrix.build_type == 'Release'
+        uses: actions/upload-artifact@v3
+        with:
+          name: fastqtools-${{ matrix.compiler.name }}-${{ matrix.build_type,, }}
+          path: build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }}/FastQTools
+          retention-days: 7
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile -t fastqtools:latest .
+
+      - name: Build development Docker image
+        run: |
+          docker build -f docker/Dockerfile.dev -t fastqtools:dev .
+
+      - name: Test Docker image
+        run: |
+          docker run --rm fastqtools:latest --help
+
+      - name: Test development Docker image
+        run: |
+          docker run --rm fastqtools:dev --help
