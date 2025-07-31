@@ -1,0 +1,42 @@
+#pragma once
+
+#include <memory>
+#include <string>
+#include <cstdint>
+
+namespace fq::statistic {
+
+/**
+ * @brief Configuration options for a statistics calculation task.
+ * This struct is defined at the interface level to decouple clients
+ * from the concrete implementation.
+ */
+struct StatisticOptions {
+    std::string input_fastq;
+    std::string output_stat;
+    uint32_t batch_size = 50000;
+    uint8_t thread_num = 4;
+};
+
+/**
+ * @brief Abstract interface for a high-level statistic calculation task.
+ * This decouples the command-line layer from the statistics implementation.
+ */
+class IStatisticCalculator {
+public:
+    virtual ~IStatisticCalculator() = default;
+
+    /**
+     * @brief Executes the entire statistics generation process.
+     */
+    virtual void run() = 0;
+};
+
+/**
+ * @brief Factory function to create an instance of a statistic calculator.
+ * @param options The configuration for the calculation task.
+ * @return A unique_ptr to an object implementing the IStatisticCalculator interface.
+ */
+auto create_statistic_calculator(const StatisticOptions& options) -> std::unique_ptr<IStatisticCalculator>;
+
+} // namespace fq::statistic
