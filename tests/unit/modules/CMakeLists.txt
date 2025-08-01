@@ -5,7 +5,8 @@ function(add_module_test test_name module_name source_files)
     add_executable(${test_name} ${source_files})
     
     target_link_libraries(${test_name} PRIVATE
-        gtest_main
+        GTest::gtest_main
+        GTest::gtest
         fq_lib # Link against the main interface library to get all dependencies
         test_utils
     )

@@ -11,9 +11,10 @@ add_executable(fastq_tests
 
 target_link_libraries(fastq_tests
     PRIVATE
-    gtest_main
-    fq_lib      # Link against the main interface library
-    test_utils
+        GTest::gtest_main
+        GTest::gtest
+        fq_lib      # Link against the main interface library
+        test_utils
 )
 
 add_test(NAME fastq_tests COMMAND fastq_tests)
