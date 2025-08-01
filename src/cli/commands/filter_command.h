@@ -16,7 +16,7 @@
 
 namespace fq::processing {
     // Forward declare the INTERFACE, not the concrete class
-    class IProcessingPipeline;
+    class i_processingPipeline;
 }
 
 namespace fq::app {
@@ -36,7 +36,7 @@ private:
     struct Config;
     std::unique_ptr<Config> m_config;
     // Depend on the INTERFACE
-    std::unique_ptr<fq::processing::IProcessingPipeline> m_pipeline;
+    std::unique_ptr<fq::processing::i_processingPipeline> m_pipeline;
 };
 
 } // namespace fq::app

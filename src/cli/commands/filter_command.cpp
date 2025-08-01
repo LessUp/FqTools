@@ -1,13 +1,13 @@
-#include "cli/commands/FilterCommand.h"
+#include "filter_command.h"
 
 #include <iomanip>
 #include <iostream>
 
-#include "Processing/Mutators/QualityTrimmer.h"
-#include "Processing/Predicates/MinQualityPredicate.h"
-#include "Processing/ProcessingPipeline.h"  // Add full definition for ProcessingStatistics
-#include "cxxopts.hpp"
-#include "interfaces/IProcessingPipeline.h"  // <-- Include the interface
+#include "processing/Mutators/quality_trimmer.h"
+#include "processing/Predicates/min_quality_predicate.h"
+#include "processing/processing_pipeline.h"  // Add full definition for ProcessingStatistics
+#include <cxxopts.hpp>
+#include "interfaces/i_processingPipeline.h"  // <-- Include the interface
 
 namespace fq::app {
 

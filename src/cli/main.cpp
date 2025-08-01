@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "Core/Core.h"
-#include "cli/commands/ICommand.h"
-#include "cli/commands/StatCommand.h"
-#include "cli/commands/FilterCommand.h"
+#include "core_legacy/core.h"
+#include "commands/i_command.h"
+#include "commands/stat_command.h"
+#include "filter_command.h"
 #include "spdlog/spdlog.h"
 
 namespace fq::cli {

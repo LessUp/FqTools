@@ -1,6 +1,6 @@
-#include "cli/commands/StatCommand.h"
-#include "interfaces/IStatisticCalculator.h" // <-- Include the interface, NOT the concrete class
-#include "cxxopts.hpp"
+#include "stat_command.h"
+#include "../../interfaces/i_statistic_calculator.h" // <-- Include the interface, NOT the concrete class
+#include <cxxopts.hpp>
 #include <iostream>
 
 namespace fq::app {
