@@ -7,21 +7,21 @@ add_subdirectory(cli)
 # For now, group all non-module code into a temporary "legacy" library.
 # We will break this down into smaller modules later.
 add_library(fq_legacy_lib STATIC
-    Core/Core.h
-    Core/std.h
-    Core/Core.cpp
-    interfaces/IStatisticCalculator.h
-    interfaces/IProcessingPipeline.h
-    interfaces/Factory.cpp
-    stats/FqStatisticWorker.cpp
-    stats/FqStatistic.cpp
-    Processing/ProcessingPipeline.cpp
-    Processing/TbbProcessingPipeline.cpp
-    Processing/Mutators/QualityTrimmer.cpp
-    Processing/IReadProcessor.cpp
-    Processing/Predicates/MinQualityPredicate.cpp
-    memory/BatchMemoryManager.h
-    memory/BatchMemoryManager.cpp
+    core_legacy/core.h
+    core_legacy/std.h
+    core_legacy/core.cpp
+    interfaces/i_statistic_calculator.h
+    interfaces/i_processing_pipeline.h
+    interfaces/factory.cpp
+    statistics/fq_statistic_worker.cpp
+    statistics/fq_statistic.cpp
+    processing/processing_pipeline.cpp
+    processing/tbb_processing_pipeline.cpp
+    processing/mutators/quality_trimmer.cpp
+    processing/i_read_processor.cpp
+    processing/predicates/min_quality_predicate.cpp
+    memory/batch_memory_manager.h
+    memory/batch_memory_manager.cpp
 )
 
 target_include_directories(fq_legacy_lib 
