@@ -102,7 +102,7 @@ void quality_trimmer::reset() {
     m_total_bases_removed.store(0, std::memory_order_relaxed);
 }
 
-auto quality_trimmer::trimFivePrime(const std::string& sequence, const std::string& quality) const -> size_t {
+auto quality_trimmer::trimFivePrime(const std::string& /*sequence*/, const std::string& quality) const -> size_t {
     for (size_t i = 0; i < quality.length(); ++i) {
         if (isHighQuality(quality[i])) {
             return i;
@@ -111,7 +111,7 @@ auto quality_trimmer::trimFivePrime(const std::string& sequence, const std::stri
     return quality.length(); // 全部都是低质量
 }
 
-auto quality_trimmer::trimThreePrime(const std::string& sequence, const std::string& quality) const -> size_t {
+auto quality_trimmer::trimThreePrime(const std::string& /*sequence*/, const std::string& quality) const -> size_t {
     for (size_t i = quality.length(); i > 0; --i) {
         if (isHighQuality(quality[i - 1])) {
             return i;

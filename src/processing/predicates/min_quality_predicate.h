@@ -1,3 +1,18 @@
+/**
+ * @file min_quality_predicate.h
+ * @brief Defines predicates for quality filtering of FASTQ reads.
+ * 
+ * This file declares several predicates used in the FASTQ data processing
+ * to filter reads based on quality metrics. Each predicate is designed to
+ * check specific criteria like minimum quality, length restrictions, and
+ * maximum allowable N ratios.
+ * 
+ * @author Shane
+ * @date 2023-10-05
+ * @version 1.0
+ * @copyright (c) 2023 Shane. All rights reserved.
+ */
+
 #pragma once
 
 #include "../i_read_processor.h"
@@ -6,6 +21,12 @@
 
 namespace fq::processing {
 
+/**
+ * @brief Predicate for evaluating minimum quality in FASTQ reads.
+ * 
+ * The min_quality_predicate class evaluates whether a FASTQ read meets
+ * the defined minimum quality threshold.
+ */
 class min_quality_predicate : public IReadPredicate {
 public:
     explicit min_quality_predicate(double min_quality, int quality_encoding = 33);

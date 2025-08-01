@@ -1,3 +1,13 @@
+/**
+ * @file tbb_processing_pipeline.cpp
+ * @brief TBB 并行处理流水线实现文件
+ * @details 实现了 tbb_processing_pipeline 类的构造、析构及主要接口，支持高效并行处理。
+ * @author FastQTools Team
+ * @date 2025-08-01
+ * @version 1.0
+ * @copyright Copyright (c) 2025 FastQTools
+ */
+
 #include "processing/tbb_processing_pipeline.h"
 #include "processing/i_read_processor.h"
 #include "core_legacy/core.h"
@@ -12,6 +22,12 @@ namespace fq::processing {
 // tbb_processing_pipeline Implementation
 //==============================================================================
 
+/**
+ * @brief tbb_processing_pipeline 构造函数
+ * @details 初始化流水线配置和内存管理器
+ * @param config 流水线配置
+ * @param memory_manager 内存管理器指针
+ */
 tbb_processing_pipeline::tbb_processing_pipeline(
     const Config& config,
     std::shared_ptr<fq::memory::batch_memory_manager> memory_manager
@@ -21,20 +37,36 @@ tbb_processing_pipeline::tbb_processing_pipeline(
     validate_config();
 }
 
+/**
+ * @brief tbb_processing_pipeline 析构函数
+ * @details 负责清理全局内存管理器（如需要）
+ */
 tbb_processing_pipeline::~tbb_processing_pipeline() {
     if (m_owns_memory_manager && m_memory_manager) {
         fq::memory::cleanup_global_memory_manager();
     }
 }
 
+/**
+ * @brief 设置输入文件路径
+ * @param input_path 输入文件路径
+ */
 void tbb_processing_pipeline::setInput(const std::string& input_path) {
     m_input_path = input_path;
 }
 
+/**
+ * @brief 设置输出文件路径
+ * @param output_path 输出文件路径
+ */
 void tbb_processing_pipeline::setOutput(const std::string& output_path) {
     m_output_path = output_path;
 }
 
+/**
+ * @brief 设置流水线处理配置
+ * @param config 处理配置参数
+ */
 void tbb_processing_pipeline::setConfig(const ProcessingConfig& config) {
     m_processing_config = config;
     
@@ -47,14 +79,26 @@ void tbb_processing_pipeline::setConfig(const ProcessingConfig& config) {
     }
 }
 
+/**
+ * @brief 添加数据修改器
+ * @param mutator 读数据修改器
+ */
 void tbb_processing_pipeline::addMutator(std::unique_ptr<IReadMutator> mutator) {
     m_mutators.push_back(std::move(mutator));
 }
 
+/**
+ * @brief 添加数据过滤器
+ * @param predicate 读数据过滤器
+ */
 void tbb_processing_pipeline::addPredicate(std::unique_ptr<IReadPredicate> predicate) {
     m_predicates.push_back(std::move(predicate));
 }
 
+/**
+ * @brief 启动流水线并返回处理统计信息
+ * @return 处理统计结果
+ */
 auto tbb_processing_pipeline::run() -> ProcessingStatistics {
     auto start_time = std::chrono::steady_clock::now();
     

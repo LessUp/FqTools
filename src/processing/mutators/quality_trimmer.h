@@ -1,3 +1,10 @@
+/**
+ * @file quality_trimmer.h
+ * @brief 各种序列修剪工具的类定义。
+ *
+ * 提供根据质量分数、长度、适配器等进行修剪的功能。
+ */
+
 #ifndef FASTQTOOLS_QUALITYTRIMMER_H
 #define FASTQTOOLS_QUALITYTRIMMER_H
 
@@ -7,10 +14,10 @@
 namespace fq::processing {
 
 /**
- * @brief 质量修剪器
- * 
- * 根据质量分数修剪FastQ读取的两端。
- * 从5'端和3'端移除低质量的碱基，直到遇到高质量碱基。
+ * @brief FastQ读取的质量修剪器。
+ *
+ * 提供基于质量分数的修剪功能，从5'和3'端去除低质量碱基。
+ * 可根据配置选择修剪模式和质量编码。
  */
 class quality_trimmer : public IReadMutator {
 public:
