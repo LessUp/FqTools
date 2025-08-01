@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "cli/commands/ICommand.h"
+#include "commands/i_command.h"
 #include <memory>
 #include <vector>
 #include <string>

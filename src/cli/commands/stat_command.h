@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "cli/commands/ICommand.h"
+#include "commands/i_command.h"
 
 namespace fq::app {
 
