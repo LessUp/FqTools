@@ -2,10 +2,11 @@
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from conan.tools.cmake import cmake_layout
+import os
 
 class FastQTools(ConanFile):
     name = "fastqtools"
-    version = "2.0.0"
+    version = "3.1.0"
     
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
@@ -46,7 +47,20 @@ class FastQTools(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
+        
+        # Generate CMake toolchain file
         tc.generate()
+        
+        # Additional CMake configuration for Clang
+        if self.settings.compiler == "clang":
+            toolchain_path = os.path.join(self.generators_folder, "conan_toolchain.cmake")
+            with open(toolchain_path, "a") as f:
+                f.write("""
+# Fix Clang-specific compiler flags
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
+""")
 
     def build(self):
         """

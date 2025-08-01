@@ -4,7 +4,7 @@ from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
 
 class FastQToolsConan(ConanFile):
     name = "fastqtools"
-    version = "2.0.0"
+    version = "3.1.0"
     license = "MIT" # Please update if not correct
     author = "Your Name <you@example.com>" # Please update
     url = "https://github.com/your-org/fastqtools" # Please update

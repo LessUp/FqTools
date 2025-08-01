@@ -7,7 +7,7 @@
 # ./scripts/package.sh [VERSION]
 #
 # Parameters:
-#   VERSION: The version number for the package (e.g., 3.0.0). Defaults to 'dev'.
+#   VERSION: The version number for the package (e.g., 3.1.0). Defaults to 'dev'.
 
 set -e
 

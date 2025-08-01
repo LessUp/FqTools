@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(FastQTools
     LANGUAGES CXX
-    VERSION 2.0.0
+    VERSION 3.1.0
     DESCRIPTION "A modern toolkit for FASTQ file processing"
     HOMEPAGE_URL "https://github.com/your-org/fastqtools"
 )
@@ -99,6 +99,7 @@ add_subdirectory(src)
 # --- Testing ---
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
+    find_package(GTest CONFIG REQUIRED)
     add_subdirectory(tests)
 endif()
 
@@ -109,16 +110,9 @@ add_executable(FastQTools
 
 target_link_libraries(FastQTools
     PRIVATE
-    fq_cli # This library contains all command logic and links to all other libs
-    spdlog::spdlog
-    fmt::fmt
-    cxxopts::cxxopts
-    ZLIB::ZLIB
-    BZip2::BZip2
-    LibLZMA::LibLZMA
-    nlohmann_json::nlohmann_json
-    mimalloc-static
-    TBB::tbb
+        fq_cli # This library contains all command logic and links to all other libs
+        fmt::fmt # Explicitly link fmt for main.cpp usage
+        TBB::tbb # Explicitly link TBB for main.cpp usage
 )
 
 target_include_directories(FastQTools 
