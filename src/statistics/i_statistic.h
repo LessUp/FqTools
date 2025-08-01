@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Core/Core.h"
+#include "core_legacy/core.h"
 
 namespace fq::statistic {
 
 // Forward declaration
-struct FqStatisticResult;
+struct fq_statisticResult;
 
-class IStatistic : public fq::common::WithID {
+class i_statistic : public fq::common::WithID {
 public:
     using Batch = fq::fastq::FqInfoBatch;
-    using Result = FqStatisticResult;
-    ~IStatistic() override = default;
+    using Result = fq_statisticResult;
+    ~i_statistic() override = default;
     virtual auto stat(const Batch& batch) -> Result = 0;
 };
 

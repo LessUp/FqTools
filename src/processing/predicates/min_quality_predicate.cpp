@@ -1,4 +1,4 @@
-#include "MinQualityPredicate.h"
+#include "min_quality_predicate.h"
 #include "spdlog/spdlog.h"
 #include <algorithm>
 #include <numeric>
@@ -7,8 +7,8 @@
 
 namespace fq::processing {
 
-// MinQualityPredicate 实现
-MinQualityPredicate::MinQualityPredicate(double min_quality, int quality_encoding)
+// min_quality_predicate 实现
+min_quality_predicate::min_quality_predicate(double min_quality, int quality_encoding)
     : m_min_quality(min_quality), m_quality_encoding(quality_encoding) {
     
         if (min_quality < 0.0 || min_quality > fq::fastq::MAX_PHRED_SCORE) {
@@ -19,15 +19,15 @@ MinQualityPredicate::MinQualityPredicate(double min_quality, int quality_encodin
         throw std::invalid_argument("质量编码必须是33（Sanger）或64（Illumina 1.3+）");
     }
     
-    spdlog::debug("MinQualityPredicate: 创建，最小质量={}, 编码偏移={}", 
+    spdlog::debug("min_quality_predicate: 创建，最小质量={}, 编码偏移={}", 
                  min_quality, quality_encoding);
 }
 
-auto MinQualityPredicate::evaluate(const fq::fastq::FqInfo& read) const -> bool {
+auto min_quality_predicate::evaluate(const fq::fastq::FqInfo& read) const -> bool {
     m_total_evaluated.fetch_add(1, std::memory_order_relaxed);
     
     if (read.qual.empty()) {
-        spdlog::warn("MinQualityPredicate: 读取缺少质量信息");
+        spdlog::warn("min_quality_predicate: 读取缺少质量信息");
         return false;
     }
     
@@ -42,17 +42,17 @@ auto MinQualityPredicate::evaluate(const fq::fastq::FqInfo& read) const -> bool 
     return passed;
 }
 
-auto MinQualityPredicate::getName() const -> std::string {
+auto min_quality_predicate::getName() const -> std::string {
     return "最小质量过滤器";
 }
 
-auto MinQualityPredicate::getDescription() const -> std::string {
+auto min_quality_predicate::getDescription() const -> std::string {
     std::ostringstream oss;
     oss << "过滤平均质量分数低于 " << m_min_quality << " 的读取";
     return oss.str();
 }
 
-auto MinQualityPredicate::getStatistics() const -> std::string {
+auto min_quality_predicate::getStatistics() const -> std::string {
     size_t total = m_total_evaluated.load(std::memory_order_relaxed);
     size_t passed = m_passed_count.load(std::memory_order_relaxed);
     double total_qual = m_total_quality.load(std::memory_order_relaxed);
@@ -70,7 +70,7 @@ auto MinQualityPredicate::getStatistics() const -> std::string {
     return oss.str();
 }
 
-auto MinQualityPredicate::calculateAverageQuality(const std::string& quality_string) const -> double {
+auto min_quality_predicate::calculateAverageQuality(const std::string& quality_string) const -> double {
     if (quality_string.empty()) {
         return 0.0;
     }

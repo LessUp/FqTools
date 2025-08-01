@@ -1,6 +1,6 @@
-#include "Processing/TbbProcessingPipeline.h"
-#include "Processing/IReadProcessor.h"
-#include "Core/Core.h"
+#include "processing/tbb_processing_pipeline.h"
+#include "processing/i_read_processor.h"
+#include "core_legacy/core.h"
 #include <iostream>
 #include <chrono>
 #include <algorithm>
@@ -9,33 +9,33 @@
 namespace fq::processing {
 
 //==============================================================================
-// TbbProcessingPipeline Implementation
+// tbb_processing_pipeline Implementation
 //==============================================================================
 
-TbbProcessingPipeline::TbbProcessingPipeline(
+tbb_processing_pipeline::tbb_processing_pipeline(
     const Config& config,
-    std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager
+    std::shared_ptr<fq::memory::batch_memory_manager> memory_manager
 ) : m_pipeline_config(config), m_memory_manager(std::move(memory_manager)) {
     
     initialize_memory_manager();
     validate_config();
 }
 
-TbbProcessingPipeline::~TbbProcessingPipeline() {
+tbb_processing_pipeline::~tbb_processing_pipeline() {
     if (m_owns_memory_manager && m_memory_manager) {
         fq::memory::cleanup_global_memory_manager();
     }
 }
 
-void TbbProcessingPipeline::setInput(const std::string& input_path) {
+void tbb_processing_pipeline::setInput(const std::string& input_path) {
     m_input_path = input_path;
 }
 
-void TbbProcessingPipeline::setOutput(const std::string& output_path) {
+void tbb_processing_pipeline::setOutput(const std::string& output_path) {
     m_output_path = output_path;
 }
 
-void TbbProcessingPipeline::setConfig(const ProcessingConfig& config) {
+void tbb_processing_pipeline::setConfig(const ProcessingConfig& config) {
     m_processing_config = config;
     
     // 更新流水线配置
@@ -47,15 +47,15 @@ void TbbProcessingPipeline::setConfig(const ProcessingConfig& config) {
     }
 }
 
-void TbbProcessingPipeline::addMutator(std::unique_ptr<IReadMutator> mutator) {
+void tbb_processing_pipeline::addMutator(std::unique_ptr<IReadMutator> mutator) {
     m_mutators.push_back(std::move(mutator));
 }
 
-void TbbProcessingPipeline::addPredicate(std::unique_ptr<IReadPredicate> predicate) {
+void tbb_processing_pipeline::addPredicate(std::unique_ptr<IReadPredicate> predicate) {
     m_predicates.push_back(std::move(predicate));
 }
 
-auto TbbProcessingPipeline::run() -> ProcessingStatistics {
+auto tbb_processing_pipeline::run() -> ProcessingStatistics {
     auto start_time = std::chrono::steady_clock::now();
     
     try {
@@ -276,7 +276,7 @@ auto TbbProcessingPipeline::run() -> ProcessingStatistics {
     }
 }
 
-auto TbbProcessingPipeline::get_performance_stats() const -> TbbProcessingPipeline::PerformanceStats {
+auto tbb_processing_pipeline::get_performance_stats() const -> tbb_processing_pipeline::PerformanceStats {
     std::lock_guard<std::mutex> lock(m_stats_mutex);
     
     // 创建统计副本
@@ -296,14 +296,14 @@ auto TbbProcessingPipeline::get_performance_stats() const -> TbbProcessingPipeli
     return stats;
 }
 
-void TbbProcessingPipeline::reset_stats() {
+void tbb_processing_pipeline::reset_stats() {
     std::lock_guard<std::mutex> lock(m_stats_mutex);
     m_stats = PerformanceStats{};
 }
 
-void TbbProcessingPipeline::initialize_memory_manager() {
+void tbb_processing_pipeline::initialize_memory_manager() {
     if (!m_memory_manager && m_pipeline_config.enable_memory_pool) {
-        fq::memory::BatchMemoryManager::Config config;
+        fq::memory::batch_memory_manager::Config config;
         config.initial_batch_pool_size = m_pipeline_config.memory_pool_size;
         config.max_batch_pool_size = m_pipeline_config.memory_pool_size * 2;
         config.enable_auto_shrink = true;
@@ -315,7 +315,7 @@ void TbbProcessingPipeline::initialize_memory_manager() {
     }
 }
 
-void TbbProcessingPipeline::validate_config() const {
+void tbb_processing_pipeline::validate_config() const {
     if (m_pipeline_config.max_tokens < 1) {
         throw fq::exception("Max tokens must be at least 1");
     }
@@ -324,7 +324,7 @@ void TbbProcessingPipeline::validate_config() const {
     }
 }
 
-void TbbProcessingPipeline::update_input_stats(double duration_ms, size_t reads_count) {
+void tbb_processing_pipeline::update_input_stats(double duration_ms, size_t reads_count) {
     if (!m_pipeline_config.enable_statistics) return;
     
     std::lock_guard<std::mutex> lock(m_stats_mutex);
@@ -333,7 +333,7 @@ void TbbProcessingPipeline::update_input_stats(double duration_ms, size_t reads_
     m_stats.total_reads += reads_count;
 }
 
-void TbbProcessingPipeline::update_processing_stats(double duration_ms, size_t reads_count) {
+void tbb_processing_pipeline::update_processing_stats(double duration_ms, size_t reads_count) {
     if (!m_pipeline_config.enable_statistics) return;
     
     std::lock_guard<std::mutex> lock(m_stats_mutex);
@@ -342,14 +342,14 @@ void TbbProcessingPipeline::update_processing_stats(double duration_ms, size_t r
     (void)reads_count; // 避免未使用参数的警告
 }
 
-void TbbProcessingPipeline::update_output_stats(double duration_ms) {
+void tbb_processing_pipeline::update_output_stats(double duration_ms) {
     if (!m_pipeline_config.enable_statistics) return;
     
     std::lock_guard<std::mutex> lock(m_stats_mutex);
     m_stats.output_time_ms += duration_ms;
 }
 
-void TbbProcessingPipeline::finalize_stats() {
+void tbb_processing_pipeline::finalize_stats() {
     if (!m_pipeline_config.enable_statistics) return;
     
     std::lock_guard<std::mutex> lock(m_stats_mutex);
@@ -381,14 +381,14 @@ void TbbProcessingPipeline::finalize_stats() {
 }
 
 //==============================================================================
-// Factory Function Implementation
+// factory Function Implementation
 //==============================================================================
 
 auto create_tbb_pipeline(
-    const TbbProcessingPipeline::Config& config,
-    std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager
-) -> std::unique_ptr<IProcessingPipeline> {
-    return std::make_unique<TbbProcessingPipeline>(config, memory_manager);
+    const tbb_processing_pipeline::Config& config,
+    std::shared_ptr<fq::memory::batch_memory_manager> memory_manager
+) -> std::unique_ptr<i_processingPipeline> {
+    return std::make_unique<tbb_processing_pipeline>(config, memory_manager);
 }
 
 } // namespace fq::processing

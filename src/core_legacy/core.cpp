@@ -1,7 +1,27 @@
-#include "Core/Core.h"
+/**
+ * @file Core.cpp
+ * @brief 核心模块实现文件
+ * @details 实现了FastQTools项目的核心功能，包括通用工具函数、计时器、编码器、FASTQ文件处理等
+ * 
+ * @author FastQTools Team
+ * @date 2025-07-31
+ * @version 3.0.0
+ * 
+ * @copyright Copyright (c) 2025 BGI-Research
+ */
+
+#include "core_legacy/core.h"
 
 namespace fq::common {
 
+/**
+ * @brief 按分隔符分割字符串
+ * @details 将输入字符串按指定分隔符分割成多个子字符串，结果存储在输出向量中
+ * 
+ * @param str 输入字符串
+ * @param tokens 输出的子字符串向量
+ * @param delim 分隔符，默认为空格
+ */
 void split(std::string_view str, std::vector<std::string>& tokens, std::string_view delim) {
     tokens.clear();
     size_t lastPos = str.find_first_not_of(delim, 0);
@@ -13,6 +33,13 @@ void split(std::string_view str, std::vector<std::string>& tokens, std::string_v
     }
 }
 
+/**
+ * @brief 获取当前时间字符串
+ * @details 获取格式化的当前时间字符串，使用C++标准库的时间函数
+ * 
+ * @param fmt 时间格式字符串，默认为"%Y-%m-%d %H:%M:%S"
+ * @return 格式化的时间字符串，失败时返回空字符串
+ */
 auto getCurrentTime(const std::string& fmt) -> std::string {
     auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
@@ -24,6 +51,13 @@ auto getCurrentTime(const std::string& fmt) -> std::string {
     return "";
 }
 
+/**
+ * @brief 去除字符串首尾空格
+ * @details 去除输入字符串首尾的空白字符（空格、制表符、换行符、回车符）
+ * 
+ * @param str 输入字符串
+ * @return 去除首尾空格后的字符串，如果字符串全为空格则返回空字符串
+ */
 auto trimSpace(std::string_view str) -> std::string {
     auto first = str.find_first_not_of(" \t\n\r");
     if (first == std::string_view::npos) return "";
@@ -31,6 +65,14 @@ auto trimSpace(std::string_view str) -> std::string {
     return std::string(str.substr(first, (last - first + 1)));
 }
 
+/**
+ * @brief 按字符分割字符串
+ * @details 使用C++20 ranges特性将输入字符串按指定字符分割成多个子字符串
+ * 
+ * @param str 输入字符串
+ * @param delimiter 分割字符
+ * @return 分割后的子字符串向量
+ */
 auto split(std::string_view str, char delimiter) -> std::vector<std::string> {
     std::vector<std::string> tokens;
     auto view = str | std::views::split(delimiter) | std::views::transform([](auto&& range) {
@@ -40,8 +82,20 @@ auto split(std::string_view str, char delimiter) -> std::vector<std::string> {
     return tokens;
 }
 
+/**
+ * @brief 构造函数
+ * @details 创建计时器实例，记录开始时间并设置计时器名称
+ * 
+ * @param name 计时器名称，用于标识不同的计时器
+ */
 Timer::Timer(std::string name) : m_name(std::move(name)), m_start_time(std::chrono::high_resolution_clock::now()) {}
 
+/**
+ * @brief 报告计时结果
+ * @details 计算从开始到当前的时间差，并以日志形式输出
+ * 
+ * @param is_debug 是否以调试级别输出，默认为true；false时以信息级别输出
+ */
 void Timer::report(bool is_debug) {
     const auto end_time = std::chrono::high_resolution_clock::now();
     const std::chrono::duration<double> diff = end_time - m_start_time;
@@ -52,6 +106,12 @@ void Timer::report(bool is_debug) {
     }
 }
 
+/**
+ * @brief 输出软件信息
+ * @details 向标准错误输出流输出软件的基本信息，包括程序名称、版本、分支和提交哈希
+ * 
+ * @param soft_name 软件名称
+ */
 void software_info(const char* soft_name) {
     fprintf(stderr, "\n");
     fprintf(stderr, "== Program   : %s\n", soft_name);
@@ -60,8 +120,18 @@ void software_info(const char* soft_name) {
     fprintf(stderr, "== CommitHash: %s\n\n", "unknown");
 }
 
+/**
+ * @brief 打印大型Logo
+ * @details 在控制台输出软件的ASCII艺术Logo（占位符实现）
+ * 
+ * @param color 是否使用彩色输出，默认为true
+ */
 void print_big_logo(bool color) { /* Implementation placeholder */ }
 
+/**
+ * @brief 打印软件信息
+ * @details 向标准输出流输出软件的版本信息和描述
+ */
 void printSoftwareInfo() {
     std::cout << "=================================================================================" << std::endl;
     std::cout << "FastQTools - A toolkit for FASTQ file processing" << std::endl;
@@ -69,6 +139,13 @@ void printSoftwareInfo() {
     std::cout << "=================================================================================" << std::endl;
 }
 
+/**
+ * @brief 彩色打印文本
+ * @details 在支持的终端上以指定颜色打印文本，支持Windows和Unix系统
+ * 
+ * @param text 要打印的文本
+ * @param color 颜色代码（Windows为控制台颜色值，Unix为ANSI颜色代码）
+ */
 void printColor(const std::string& text, int color) {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -80,11 +157,23 @@ void printColor(const std::string& text, int color) {
 #endif
 }
 
+/**
+ * @brief 获取日志记录器
+ * @details 获取全局共享的日志记录器实例，使用静态局部变量确保单例模式
+ * 
+ * @return 日志记录器的共享指针
+ */
 auto getLogger() -> std::shared_ptr<spdlog::logger> {
     static auto logger = spdlog::stdout_color_mt("fastqtools");
     return logger;
 }
 
+/**
+ * @brief 初始化日志记录器
+ * @details 初始化指定名称的日志记录器并设置为调试级别
+ * 
+ * @param name 日志记录器名称，默认为"fastqtools"
+ */
 void initLogger(const std::string& name) {
     auto logger = spdlog::stdout_color_mt(name);
     logger->set_level(spdlog::level::debug);
@@ -94,6 +183,12 @@ void initLogger(const std::string& name) {
 
 namespace fq::encoder {
 
+/**
+ * @brief 获取压缩参数
+ * @details 根据压缩级别返回相应的压缩参数值
+ * 
+ * @return 压缩参数值（Fast=1, Default=6, High=9）
+ */
 auto EncoderContext::getCompressionParam() const -> int {
     switch (level) {
         case CompressionLevel::Fast:    return 1;
@@ -103,6 +198,10 @@ auto EncoderContext::getCompressionParam() const -> int {
     }
 }
 
+/**
+ * @brief 构造函数
+ * @details 初始化ID压缩器，预分配字典和最后部分的存储空间
+ */
 IDCompressor::IDCompressor() { 
     constexpr size_t INITIAL_DICTIONARY_CAPACITY = 1024;
     constexpr size_t INITIAL_LAST_PARTS_CAPACITY = 16;
@@ -110,16 +209,36 @@ IDCompressor::IDCompressor() {
     m_last_parts.reserve(INITIAL_LAST_PARTS_CAPACITY); 
 }
 
+/**
+ * @brief 压缩ID数据
+ * @details 基础实现，当前仅复制数据（占位符实现）
+ * 
+ * @param raw_data 原始数据
+ * @param compressed_data 压缩后的数据
+ * @param context 编码器上下文
+ */
 void IDCompressor::compress(const std::vector<char>& raw_data, std::vector<char>& compressed_data, const EncoderContext& context) {
     // Basic implementation - just copy data for now
     compressed_data = raw_data;
 }
 
+/**
+ * @brief 解压缩ID数据
+ * @details 基础实现，当前仅复制数据（占位符实现）
+ * 
+ * @param compressed_data 压缩数据
+ * @param raw_data 解压缩后的数据
+ * @param context 编码器上下文
+ */
 void IDCompressor::decompress(const std::vector<char>& compressed_data, std::vector<char>& raw_data, const EncoderContext& context) {
     // Basic implementation - just copy data for now
     raw_data = compressed_data;
 }
 
+/**
+ * @brief 构造函数
+ * @details 初始化质量分数压缩器
+ */
 QualCompressor::QualCompressor() {}
 
 void QualCompressor::compress(const std::vector<char>& raw_data, std::vector<char>& compressed_data, const EncoderContext& context) {

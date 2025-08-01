@@ -1,7 +1,7 @@
 #ifndef FASTQTOOLS_QUALITYTRIMMER_H
 #define FASTQTOOLS_QUALITYTRIMMER_H
 
-#include "../IReadProcessor.h"
+#include "../i_read_processor.h"
 #include <atomic>
 
 namespace fq::processing {
@@ -12,7 +12,7 @@ namespace fq::processing {
  * 根据质量分数修剪FastQ读取的两端。
  * 从5'端和3'端移除低质量的碱基，直到遇到高质量碱基。
  */
-class QualityTrimmer : public IReadMutator {
+class quality_trimmer : public IReadMutator {
 public:
     /**
      * @brief 修剪模式
@@ -30,7 +30,7 @@ public:
      * @param mode 修剪模式
      * @param quality_encoding 质量编码偏移
      */
-    QualityTrimmer(double quality_threshold, 
+    quality_trimmer(double quality_threshold, 
                    size_t min_length = 1,
                    TrimMode mode = TrimMode::Both,
                    int quality_encoding = 33);

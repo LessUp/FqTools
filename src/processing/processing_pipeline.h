@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file ProcessingPipeline.h
+ * @file processing_pipeline.h
  * @brief FastQ 数据处理管道实现
  * @details 该模块实现了 FastQ 文件的读取、处理和写入功能，支持多种数据处理策略
  * 
@@ -13,7 +13,7 @@
  * @license MIT License
  */
 
-#include "interfaces/IProcessingPipeline.h" // Include the new interface
+#include "../interfaces/i_processing_pipeline.h" // Include the new interface
 #include <vector>
 #include <memory>
 #include <atomic>
@@ -82,20 +82,20 @@ struct ProcessingStatistics {
  * @invariant 配置设置必须在运行前完成
  * @warning 处理大文件时建议使用并行模式以提高性能
  */
-class ProcessingPipeline : public IProcessingPipeline { // Inherit from interface
+class processing_pipeline : public i_processingPipeline { // Inherit from interface
 public:
     /**
      * @brief 默认构造函数
      * @details 初始化处理管道，设置默认配置
      * @post 管道处于就绪状态，可以接受配置
      */
-    ProcessingPipeline();
+    processing_pipeline();
     
     /**
      * @brief 析构函数
      * @details 清理所有资源，确保文件句柄正确关闭
      */
-    ~ProcessingPipeline();
+    ~processing_pipeline();
 
     /**
      * @brief 设置输入文件路径

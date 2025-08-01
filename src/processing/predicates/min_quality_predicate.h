@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Processing/IReadProcessor.h"
+#include "../i_read_processor.h"
 #include <atomic>
 #include <string>
 
 namespace fq::processing {
 
-class MinQualityPredicate : public IReadPredicate {
+class min_quality_predicate : public IReadPredicate {
 public:
-    explicit MinQualityPredicate(double min_quality, int quality_encoding = 33);
+    explicit min_quality_predicate(double min_quality, int quality_encoding = 33);
     auto evaluate(const fq::fastq::FqInfo& read) const -> bool override;
     auto getName() const -> std::string;
     auto getDescription() const -> std::string;

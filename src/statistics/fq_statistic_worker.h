@@ -5,8 +5,8 @@
 #include <vector>
 #include <memory>
 
-#include "Core/Core.h"
-#include "IStatistic.h"
+#include "core_legacy/core.h"
+#include "i_statistic.h"
 
 namespace fq::statistic {
 
@@ -19,13 +19,13 @@ constexpr int MAX_BASE_NUM = 5;
  * This modernized class is a standalone utility that operates on a batch of data.
  * It relies on FastQInfer for contextual information like quality score type.
  */
-class FqStatisticWorker final : public IStatistic {
+class fq_statistic_worker final : public i_statistic {
 public:
     /**
      * @brief Constructs a statistic worker.
      * @param fq_infer A shared pointer to a FastQInfer object containing file attributes.
      */
-    explicit FqStatisticWorker(std::shared_ptr<fq::fastq::FastQInfer> fq_infer);
+    explicit fq_statistic_worker(std::shared_ptr<fq::fastq::FastQInfer> fq_infer);
 
     /**
      * @brief Processes a single batch of FASTQ records and returns the result.

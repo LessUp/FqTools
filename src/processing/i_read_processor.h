@@ -1,5 +1,5 @@
 /**
- * @file IReadProcessor.h
+ * @file i_read_processor.h
  * @brief 读取处理器接口定义
  * @details 该文件定义了读取处理器的抽象接口，包括数据修改器和数据过滤器
  *
@@ -12,7 +12,7 @@
  */
 
 #pragma once
-#include "Core/Core.h"
+#include "core_legacy/core.h"
 #include <string>
 
 namespace fq::processing

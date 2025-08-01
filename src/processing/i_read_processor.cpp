@@ -1,5 +1,5 @@
-#include "IReadProcessor.h"
-#include "ProcessingPipeline.h"
+#include "i_read_processor.h"
+#include "processing_pipeline.h"
 #include <sstream>
 #include <iomanip>
 

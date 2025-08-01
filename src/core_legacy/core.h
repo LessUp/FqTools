@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Common/include/gzstream.h"
+#include "external/include/gzstream.h"
 #include "std.h"
 
 namespace fq

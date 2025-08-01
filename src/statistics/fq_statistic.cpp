@@ -1,9 +1,9 @@
-#include "stats/FqStatistic.h"
+#include "statistics/fq_statistic.h"
 
-#include "stats/FqStatisticWorker.h"
+#include "statistics/fq_statistic_worker.h"
 
 namespace fq::statistic {
-auto FqStatisticResult::operator+=(const FqStatisticResult& other) -> FqStatisticResult& {
+auto fq_statisticResult::operator+=(const fq_statisticResult& other) -> fq_statisticResult& {
     this->n_read += other.n_read;
     // Add other members here when the struct is expanded
     return *this;
@@ -19,7 +19,7 @@ auto FqStatisticResult::operator+=(const FqStatisticResult& other) -> FqStatisti
 #include <numeric>
 #include <vector>
 
-#include "Core/Core.h"
+#include "core_legacy/core.h"
 #include "spdlog/spdlog.h"
 
 namespace fq::statistic {
@@ -35,11 +35,11 @@ static auto calErrPerPos(const std::vector<uint64_t>& n_pos_qual, uint64_t n_rea
     return err_per_pos / static_cast<double>(n_read);
 }
 
-FqStatistic::FqStatistic(const StatisticOptions& options) : m_options(options) {
+fq_statistic::fq_statistic(const StatisticOptions& options) : m_options(options) {
     m_fq_infer = std::make_shared<fq::fastq::FastQInfer>(m_options.input_fastq);
 }
 
-void FqStatistic::run() {
+void fq_statistic::run() {
     spdlog::info("Starting FASTQ statistics generation for '{}' using TBB pipeline.", m_options.input_fastq);
 
     const auto& attrib = m_fq_infer->getFqFileAttribution();
@@ -48,7 +48,7 @@ void FqStatistic::run() {
     }
 
     // The final result, captured by the aggregation stage
-    FqStatisticResult final_result;
+    fq_statisticResult final_result;
 
     // The pipeline will manage its own concurrency.
     // The number of "tokens" controls the level of parallelism.
@@ -77,19 +77,19 @@ void FqStatistic::run() {
             }) &
             // Stage 2: Processing Filter (Parallel)
             // Takes a batch, processes it, and returns a partial result.
-            tbb::make_filter<std::shared_ptr<fq::fastq::FqInfoBatch>, FqStatisticResult>(
+            tbb::make_filter<std::shared_ptr<fq::fastq::FqInfoBatch>, fq_statisticResult>(
                 tbb::filter_mode::parallel,
-                [this](std::shared_ptr<fq::fastq::FqInfoBatch> batch) -> FqStatisticResult {
+                [this](std::shared_ptr<fq::fastq::FqInfoBatch> batch) -> fq_statisticResult {
                     if (!batch)
-                        return FqStatisticResult();
-                    FqStatisticWorker worker(m_fq_infer);
+                        return fq_statisticResult();
+                    fq_statistic_worker worker(m_fq_infer);
                     return worker.stat(*batch);
                 }) &
             // Stage 3: Aggregation Filter (Serial)
             // Takes partial results and accumulates them into a final result.
-            tbb::make_filter<FqStatisticResult, void>(
+            tbb::make_filter<fq_statisticResult, void>(
                 tbb::filter_mode::serial_in_order,
-                [&final_result](const FqStatisticResult& partial_result) { final_result += partial_result; }));
+                [&final_result](const fq_statisticResult& partial_result) { final_result += partial_result; }));
 
     spdlog::info("TBB pipeline finished. Aggregated results from all batches.");
 
@@ -97,7 +97,7 @@ void FqStatistic::run() {
     spdlog::info("Statistics report saved to '{}'", m_options.output_stat);
 }
 
-void FqStatistic::writeResult(const FqStatisticResult& result) {
+void fq_statistic::writeResult(const fq_statisticResult& result) {
     std::ofstream writer(m_options.output_stat);
     if (!writer) {
         throw fq::exception("Failed to open output statistics file: " + m_options.output_stat);
