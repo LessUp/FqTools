@@ -34,7 +34,17 @@
       "Bash(git remote add:*)",
       "Bash(git push -u origin master)",
       "Bash(git fetch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(bash:*)",
+      "Bash(./scripts/build-clang.sh:*)",
+      "Bash(./scripts/build-gcc.sh:*)",
+      "Bash(cat:*)",
+      "Bash(./build.sh:*)",
+      "Bash(nm:*)",
+      "Bash(./test:*)",
+      "Bash(./build-clang.sh --release)",
+      "Bash(conan:*)",
+      "Bash(./scripts/build-clang-simple.sh:*)"
     ],
     "deny": []
   }

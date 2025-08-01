@@ -63,3 +63,4 @@ config/dependencies/
 build-clang-debug/
 build-clang-release/
 build-gcc-debug/
+build-gcc-release/
