@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file IProcessingPipeline.h
+ * @file i_processingPipeline.h
  * @brief 处理管道接口定义
  * @details 该模块定义了 FastQ 数据处理管道的抽象接口，
  *          实现了命令行层与具体实现之间的解耦
@@ -49,14 +49,14 @@ struct ProcessingConfig
  * @invariant 所有配置必须在调用 run() 之前完成
  * @note 该接口支持多种实现方式，如串行处理、并行处理等
  */
-class IProcessingPipeline
+class i_processingPipeline
 {
 public:
     /**
      * @brief 虚析构函数
      * @details 确保派生类的正确析构
      */
-    virtual ~IProcessingPipeline() = default;
+    virtual ~i_processingPipeline() = default;
 
     /**
      * @brief 设置输入文件路径
@@ -127,13 +127,13 @@ public:
 
 /**
  * @brief 创建处理管道实例的工厂函数
- * @details 创建并返回一个实现了 IProcessingPipeline 接口的对象实例
+ * @details 创建并返回一个实现了 i_processingPipeline 接口的对象实例
  *          该函数实现了工厂模式，隐藏了具体的实现类
  * 
- * @return std::unique_ptr<IProcessingPipeline> 指向处理管道实例的唯一指针
+ * @return std::unique_ptr<i_processingPipeline> 指向处理管道实例的唯一指针
  * @post 返回的处理管道实例已初始化并准备使用
  * @note 调用者负责管理返回的实例生命周期
  */
-auto create_processing_pipeline() -> std::unique_ptr<IProcessingPipeline>;
+auto create_processing_pipeline() -> std::unique_ptr<i_processingPipeline>;
 
 } // namespace fq::processing

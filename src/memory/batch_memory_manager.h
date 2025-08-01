@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file BatchMemoryManager.h
+ * @file batch_memory_manager.h
  * @brief 批处理内存管理器
  * @details 该模块实现了高效的内存管理机制，包括对象池、内存监控和自动优化功能
  *          主要用于 FastQ 数据处理过程中的内存分配和释放管理
@@ -20,7 +20,7 @@
 #include <mutex>
 #include <atomic>
 #include <condition_variable>
-#include "Core/Core.h"
+#include "core_legacy/core.h"
 
 namespace fq::memory {
 
@@ -203,7 +203,7 @@ private:
  * @invariant 内存使用量不超过配置的最大限制
  * @warning 该类设计为单例模式，不建议创建多个实例
  */
-class BatchMemoryManager {
+class batch_memory_manager {
 public:
     /**
      * @brief 配置结构体
@@ -239,20 +239,20 @@ public:
      * @post 内存管理器被初始化并准备使用
      * @throw std::invalid_argument 如果配置参数无效
      */
-    explicit BatchMemoryManager(const Config& config = Config{});
+    explicit batch_memory_manager(const Config& config = Config{});
     
     /**
      * @brief 析构函数
      * @details 清理所有资源，包括对象池和后台线程
      * @post 所有资源被正确释放
      */
-    ~BatchMemoryManager();
+    ~batch_memory_manager();
 
     // 禁用拷贝和移动，确保线程安全
-    BatchMemoryManager(const BatchMemoryManager&) = delete;
-    auto operator=(const BatchMemoryManager&) -> BatchMemoryManager& = delete;
-    BatchMemoryManager(BatchMemoryManager&&) = delete;
-    auto operator=(BatchMemoryManager&&) -> BatchMemoryManager& = delete;
+    batch_memory_manager(const batch_memory_manager&) = delete;
+    auto operator=(const batch_memory_manager&) -> batch_memory_manager& = delete;
+    batch_memory_manager(batch_memory_manager&&) = delete;
+    auto operator=(batch_memory_manager&&) -> batch_memory_manager& = delete;
 
     /**
      * @brief 获取一个 FqInfoBatch 对象
@@ -366,10 +366,10 @@ private:
  * @brief 全局内存管理器访问器
  * @details 获取全局内存管理器实例的单例访问器
  * 
- * @return std::shared_ptr<BatchMemoryManager> 全局内存管理器的共享指针
+ * @return std::shared_ptr<batch_memory_manager> 全局内存管理器的共享指针
  * @note 如果未初始化，会自动创建默认配置的实例
  */
-auto global_memory_manager() -> std::shared_ptr<BatchMemoryManager>;
+auto global_memory_manager() -> std::shared_ptr<batch_memory_manager>;
 
 /**
  * @brief 初始化全局内存管理器
@@ -379,7 +379,7 @@ auto global_memory_manager() -> std::shared_ptr<BatchMemoryManager>;
  * @post 全局内存管理器被初始化
  * @warning 如果已存在实例，会被替换
  */
-void init_global_memory_manager(const BatchMemoryManager::Config& config = BatchMemoryManager::Config{});
+void init_global_memory_manager(const batch_memory_manager::Config& config = batch_memory_manager::Config{});
 
 /**
  * @brief 清理全局内存管理器

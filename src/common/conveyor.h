@@ -2,7 +2,7 @@
 #define FASTQTOOLS_CONVEYOR_H
 
 /**
- * @file Conveyor.h
+ * @file conveyor.h
  * @brief 线程安全的数据传输带组件
  * @details 该组件实现了生产者-消费者模式，用于在线程间高效传递数据块
  * 
@@ -35,10 +35,10 @@ namespace fq::common {
  * @warning 析构时会清理所有剩余数据块，请确保数据处理完成
  */
 template <typename D>
-class Conveyor {
+class conveyor {
 public:
     /**
-     * @brief 构造函数，创建 Conveyor 并预分配对象池
+     * @brief 构造函数，创建 conveyor 并预分配对象池
      * @details 在后台线程中预分配指定数量的数据块，提高运行时性能
      * 
      * @param malloc_func 用于分配新数据块的函数
@@ -48,7 +48,7 @@ public:
      * @post 对象池中包含指定数量的空闲数据块
      * @note 初始化在后台线程中进行，不会阻塞构造函数
      */
-    Conveyor(
+    conveyor(
         std::function<D()> malloc_func, 
         size_t size, 
         std::function<void(D&)> delete_func = [](D& data) { delete data; })
@@ -70,7 +70,7 @@ public:
      * @warning 如果填充队列中仍有数据块，会发出警告并清理
      * @note 确保所有数据处理完成后再销毁对象
      */
-    ~Conveyor() {
+    ~conveyor() {
         if (m_init_thread && m_init_thread->joinable()) {
             m_init_thread->join();
         }
@@ -83,7 +83,7 @@ public:
 
         // 检查并清理填充队列中的剩余数据块
         if (getFill() > 0) {
-            spdlog::warn("Conveyor has {} items in fill_queue on destruction.", getFill());
+            spdlog::warn("conveyor has {} items in fill_queue on destruction.", getFill());
             while(dequeueDataFromFill(data)) {
                 m_delete_func(data);
             }
@@ -91,8 +91,8 @@ public:
     }
 
     // 禁用拷贝构造和赋值操作，确保线程安全
-    Conveyor(const Conveyor&) = delete;
-    auto operator=(const Conveyor&) -> Conveyor& = delete;
+    conveyor(const conveyor&) = delete;
+    auto operator=(const conveyor&) -> conveyor& = delete;
 
     /**
      * @brief 将数据块放回空闲池中
