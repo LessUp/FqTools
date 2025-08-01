@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2025-08-01
+
+### Changed
+- **[配置]** 更新了Claude配置文件，添加了新的构建脚本权限支持
+- **[构建系统]** 增强了构建脚本的错误处理和日志记录功能
+
+### Fixed
+- **[权限]** 修复了构建脚本中缺失的bash命令权限
+- **[工具链]** 完善了Clang和GCC构建脚本的权限配置
+
+## [3.1.0] - 2025-08-01
+
+### Added
+- **[构建系统]** 完成了构建系统的现代化增强，添加了静态检查、USAN、ASAN支持
+- **[构建系统]** 创建了专门的GCC和Clang构建脚本（`build-gcc.sh`、`build-clang.sh`）
+- **[代码质量]** 集成了代码覆盖率检查工具和配置
+- **[CI/CD]** 完善了CI/CD配置，增加了多编译器构建和质量检查流水线
+- **[依赖管理]** 解决了GCC Debug模式下的fmt库链接问题，通过手动配置链接依赖
+
+### Changed
+- **[构建系统]** 修复了`build.sh`、`build-gcc.sh`、`build-clang.sh`脚本中的参数处理逻辑
+- **[构建系统]** 解决了cxxopts头文件包含路径问题，修复了编译错误
+- **[构建系统]** 更新了项目版本号，从3.0.0升级到3.1.0
+- **[配置管理]** 同步更新了CMakeLists.txt和conanfile.py中的版本号
+- **[测试框架]** 修复了GTest链接配置，使用正确的CMake目标链接方式
+- **[模块系统]** 删除了`core_legacy`中的重复`split`函数定义，统一使用`modules/common`中的实现
+
+### Fixed
+- **[构建系统]** 解决了`--help`选项无法正常工作的问题
+- **[构建系统]** 实现了正确的参数解析和验证机制
+- **[依赖管理]** 修复了Conan依赖传递和包含路径配置问题
+- **[测试系统]** 解决了测试程序中的GTest符号链接问题
+- **[链接错误]** 修复了`split`函数多重定义错误，该错误导致构建失败
+- **[模块冲突]** 解决了新旧模块系统之间的函数定义冲突问题
+
+### Updated
+- **[版本管理]** 统一了项目各处的版本号，确保一致性
+- **[变更记录]** 添加了版本更新的详细记录
+- **[构建验证]** 验证了增强的构建脚本能够正常工作，确认了ASAN支持正常
+- **[工具链]** 测试了多编译器（GCC/Clang）构建功能
+- **[构建状态]** GCC Release模式构建成功，主程序可执行文件正常生成
+- **[Clang支持]** 增强了Clang编译器支持，修复了编译器混用问题，创建了简化版构建脚本
+- **[项目文档]** 创建了完整的构建系统现代化总结报告，记录了所有技术细节和成果
+
+### Fixed
+- **[hwloc警告]** 解决了build-clang.sh脚本中的hwloc库libtool安装警告，通过改进Conan配置和错误处理机制
+- **[编译器一致性]** 修复了Conan配置中的编译器混用问题，确保构建和主机环境都使用Clang编译器
+- **[日志处理]** 增强了构建脚本的日志处理能力，能够识别和过滤良性的hwloc警告，同时捕获真正的错误
+- **[UserToolchain错误]** 修复了Conan配置中UserToolchain对象的属性错误，正确实现了Clang编译器的标志配置
+
 ## [3.0.0] - 2025-07-31
 
 ### Refactored
