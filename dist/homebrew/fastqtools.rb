@@ -2,7 +2,7 @@
 class Fastqtools < Formula
   desc "A modern toolkit for FASTQ file processing"
   homepage "https://github.com/your-org/fastqtools" # Please update
-  url "https://github.com/your-org/fastqtools/archive/refs/tags/v2.0.0.tar.gz" # Placeholder
+  url "https://github.com/your-org/fastqtools/archive/refs/tags/v3.1.0.tar.gz" # Placeholder
   sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" # Placeholder for empty file
   license "MIT" # Please update if not correct
 
