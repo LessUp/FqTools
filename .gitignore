@@ -58,3 +58,8 @@ CMakeUserPresets.json
 .DS_Store
 Thumbs.db
 config/dependencies/
+
+
+build-clang-debug/
+build-clang-release/
+build-gcc-debug/
