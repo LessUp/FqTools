@@ -1,7 +1,14 @@
+/**
+ * @file core.h
+ * @brief 核心功能组件定义。
+ *
+ * 提供FastQ数据处理的基础类和工具，包括ID管理、序列和质量验证等功能。
+ */
+
 #pragma once
 
-// 在完全模块化可行之前，暂时使用传统头文件
-// export module fq.core;
+// 传统头文件使用，尚未模块化
+// export module fq.core;  // 当前尚不支持此模块导出
 
 #include <cstdint>
 #include <memory>
@@ -44,7 +51,10 @@ namespace fq::core {
         Third = 3 
     };
     
-    // 基础接口
+    /**
+     * @class WithID
+     * @brief 提供ID管理功能的基础接口。
+     */
     class WithID {
     public:
         virtual ~WithID() = default;
@@ -159,7 +169,12 @@ namespace fq::core {
         }
     };
     
-    // 序列工具
+    /**
+     * @class SequenceUtils
+     * @brief 提供DNA/RNA序列验证与处理的工具函数。
+     *
+     * 提供GC含量计算、反向互补、序列复杂度计算等功能。
+     */
     class SequenceUtils {
     public:
         // 核酸字符集

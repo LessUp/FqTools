@@ -1,6 +1,6 @@
-#include "interfaces/i_statisticCalculator.h"
+#include "interfaces/i_statistic_calculator.h"
 #include "statistics/fq_statistic.h"
-#include "interfaces/i_processingPipeline.h"
+#include "interfaces/i_processing_pipeline.h"
 #include "processing/processing_pipeline.h"
 #include "processing/tbb_processing_pipeline.h"
 

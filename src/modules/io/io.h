@@ -1,7 +1,14 @@
+/**
+ * @file io.h
+ * @brief 输入输出相关的类与工具函数定义。
+ *
+ * 提供文件读取、缓冲管理、异步I/O等功能。
+ */
+
 #pragma once
 
-// 在完全模块化可行之前，暂时使用传统头文件
-// export module fq.io;
+// 传统头文件使用，尚未模块化
+// export module fq.io;  // 当前尚不支持此模块导出
 
 #include <memory>
 #include <span>
@@ -19,7 +26,12 @@
 // import fq.error;
 
 namespace fq::io {
-    // 缓冲区接口
+    /**
+     * @class Buffer
+     * @brief 定义缓冲区的抽象接口。
+     *
+     * 继承了内存跟踪功能，支持数据访问与管理。
+     */
     class Buffer : public fq::core::MemoryTrackable {
     public:
         virtual ~Buffer() = default;
@@ -133,7 +145,10 @@ namespace fq::io {
         std::shared_ptr<Impl> m_impl;
     };
 
-    // 异步I/O接口
+    /**
+     * @class AsyncReader
+     * @brief 定义通用的异步读取器接口。
+     */
     template<typename T>
     class AsyncReader {
     public:

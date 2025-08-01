@@ -1,10 +1,11 @@
 /**
  * @file config.cpp
- * @brief 实现了 Configuration 类的功能。
- * @author BGI-Research
+ * @brief 配置模块实现文件
+ * @details 实现了 Configuration 类的主要功能，包括文件和命令行参数解析。
+ * @author FastQTools Team
+ * @date 2025-08-01
  * @version 1.0
- * @date 2025-07-31
- * @copyright Copyright (c) 2025 BGI-Research
+ * @copyright Copyright (c) 2025 FastQTools
  */
 
 #include "config.h"
@@ -26,6 +27,11 @@ extern char** environ;
 
 namespace fq::config {
 
+/**
+ * @brief 从配置文件加载参数
+ * @details 检查文件存在性并解析内容，异常时抛出配置错误
+ * @param config_file 配置文件路径
+ */
 void Configuration::load_from_file(const std::filesystem::path& config_file) {
     if (!std::filesystem::exists(config_file)) {
         FQ_THROW_CONFIG_ERROR(std::format("Configuration file '{}' does not exist", config_file.string()));
@@ -37,6 +43,12 @@ void Configuration::load_from_file(const std::filesystem::path& config_file) {
     parse_config_stream(file);
 }
 
+/**
+ * @brief 从命令行参数加载配置
+ * @details 支持多种参数格式，包括 --key=value、--key、-k value
+ * @param argc 参数个数
+ * @param argv 参数数组
+ */
 void Configuration::load_from_args(int argc, char* argv[]) {
     // 解析命令行参数。
     // 支持三种格式:

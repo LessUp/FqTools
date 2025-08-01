@@ -1,3 +1,17 @@
+/**
+ * @file i_statistic_calculator.h
+ * @brief Interface and structures for statistic calculation tasks.
+ * 
+ * This file provides interfaces and supporting structures for performing
+ * various statistics calculations on FASTQ data. It decouples clients from
+ * concrete implementations and facilitates flexible, high-level processing.
+ * 
+ * @author Shane
+ * @date 2023-10-05
+ * @version 1.0
+ * @copyright (c) 2023 Shane. All rights reserved.
+ */
+
 #pragma once
 
 #include <memory>

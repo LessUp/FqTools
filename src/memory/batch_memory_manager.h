@@ -182,12 +182,10 @@ private:
     std::atomic<size_t> m_miss_count{0};                                   ///< 未命中次数
 
     /**
-     * @brief 创建新的 FqInfoBatch 对象
-     * @details 创建新的 FqInfoBatch 对象并更新统计信息
-     * 
-     * @return std::unique_ptr<fq::fastq::FqInfoBatch> 新创建的对象
-     * @post 统计信息被更新
-     * @note 该方法仅在池为空时调用
+     * @brief 创建新的 FqInfoBatch 对象（私有方法）
+     * @details 仅供对象池内部调用，用于分配新对象并更新统计信息。
+     * @return 新创建的 FqInfoBatch 智能指针
+     * @note 线程安全，自动统计分配次数
      */
     auto create_object() -> std::unique_ptr<fq::fastq::FqInfoBatch>;
 };

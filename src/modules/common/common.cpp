@@ -110,7 +110,7 @@ auto IDGenerator::reset() -> void {
 }
 
 void print_software_info() {
-    std::cout << "FastQTools v3.0.0 - Modern C++20 FastQ Processing Tool\n";
+    std::cout << "FastQTools v3.1.0 - Modern C++20 FastQ Processing Tool\n";
     std::cout << "Copyright (c) 2025 BGI-Research\n";
     std::cout << "Built with modern C++ modules and high-performance parallel processing\n";
 }

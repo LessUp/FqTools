@@ -5,7 +5,7 @@
  * 
  * @author FastQTools Team
  * @date 2025-07-31
- * @version 3.0.0
+ * @version 3.1.0
  * 
  * @copyright Copyright (c) 2025 BGI-Research
  */
@@ -14,24 +14,6 @@
 
 namespace fq::common {
 
-/**
- * @brief 按分隔符分割字符串
- * @details 将输入字符串按指定分隔符分割成多个子字符串，结果存储在输出向量中
- * 
- * @param str 输入字符串
- * @param tokens 输出的子字符串向量
- * @param delim 分隔符，默认为空格
- */
-void split(std::string_view str, std::vector<std::string>& tokens, std::string_view delim) {
-    tokens.clear();
-    size_t lastPos = str.find_first_not_of(delim, 0);
-    size_t pos = str.find(delim, lastPos);
-    while (lastPos != std::string_view::npos) {
-        tokens.emplace_back(str.substr(lastPos, pos - lastPos));
-        lastPos = str.find_first_not_of(delim, pos);
-        pos = str.find(delim, lastPos);
-    }
-}
 
 /**
  * @brief 获取当前时间字符串
@@ -65,22 +47,6 @@ auto trimSpace(std::string_view str) -> std::string {
     return std::string(str.substr(first, (last - first + 1)));
 }
 
-/**
- * @brief 按字符分割字符串
- * @details 使用C++20 ranges特性将输入字符串按指定字符分割成多个子字符串
- * 
- * @param str 输入字符串
- * @param delimiter 分割字符
- * @return 分割后的子字符串向量
- */
-auto split(std::string_view str, char delimiter) -> std::vector<std::string> {
-    std::vector<std::string> tokens;
-    auto view = str | std::views::split(delimiter) | std::views::transform([](auto&& range) {
-        return std::string(range.begin(), range.end());
-    });
-    std::ranges::copy(view, std::back_inserter(tokens));
-    return tokens;
-}
 
 /**
  * @brief 构造函数
@@ -126,7 +92,7 @@ void software_info(const char* soft_name) {
  * 
  * @param color 是否使用彩色输出，默认为true
  */
-void print_big_logo(bool color) { /* Implementation placeholder */ }
+void print_big_logo(bool /*color*/) { /* Implementation placeholder */ }
 
 /**
  * @brief 打印软件信息
@@ -217,7 +183,7 @@ IDCompressor::IDCompressor() {
  * @param compressed_data 压缩后的数据
  * @param context 编码器上下文
  */
-void IDCompressor::compress(const std::vector<char>& raw_data, std::vector<char>& compressed_data, const EncoderContext& context) {
+void IDCompressor::compress(const std::vector<char>& raw_data, std::vector<char>& compressed_data, const EncoderContext& /*context*/) {
     // Basic implementation - just copy data for now
     compressed_data = raw_data;
 }
@@ -230,7 +196,7 @@ void IDCompressor::compress(const std::vector<char>& raw_data, std::vector<char>
  * @param raw_data 解压缩后的数据
  * @param context 编码器上下文
  */
-void IDCompressor::decompress(const std::vector<char>& compressed_data, std::vector<char>& raw_data, const EncoderContext& context) {
+void IDCompressor::decompress(const std::vector<char>& compressed_data, std::vector<char>& raw_data, const EncoderContext& /*context*/) {
     // Basic implementation - just copy data for now
     raw_data = compressed_data;
 }
@@ -241,12 +207,12 @@ void IDCompressor::decompress(const std::vector<char>& compressed_data, std::vec
  */
 QualCompressor::QualCompressor() {}
 
-void QualCompressor::compress(const std::vector<char>& raw_data, std::vector<char>& compressed_data, const EncoderContext& context) {
+void QualCompressor::compress(const std::vector<char>& raw_data, std::vector<char>& compressed_data, const EncoderContext& /*context*/) {
     // Basic implementation - just copy data for now
     compressed_data = raw_data;
 }
 
-void QualCompressor::decompress(const std::vector<char>& compressed_data, std::vector<char>& raw_data, const EncoderContext& context) {
+void QualCompressor::decompress(const std::vector<char>& compressed_data, std::vector<char>& raw_data, const EncoderContext& /*context*/) {
     // Basic implementation - just copy data for now
     raw_data = compressed_data;
 }
@@ -268,7 +234,7 @@ auto EncoderPipeline::getCompressedQualData() const -> const std::vector<char>& 
 
 namespace fq::fastq {
 
-FastQInfer::FastQInfer(const std::string& input_path, uint32_t infer_batch_size) { /* Placeholder */ }
+FastQInfer::FastQInfer(const std::string& /*input_path*/, uint32_t /*infer_batch_size*/) { /* Placeholder */ }
 
 auto FastQInfer::getFqFileAttribution() const -> const FqFileAttribution& { return m_fqfile_attribution; }
 
@@ -290,7 +256,7 @@ FastQReader::FastQReader(std::string file_name1, std::string file_name2, std::sh
 
 FastQReader::~FastQReader() = default;
 
-auto FastQReader::read(FqInfoBatch& batch, int batch_size) -> bool {
+auto FastQReader::read(FqInfoBatch& /*batch*/, int /*batch_size*/) -> bool {
     // Basic implementation - return false for now
     return false;
 }
@@ -309,7 +275,7 @@ void FastQReader::openFile(const std::string& file_name, std::unique_ptr<igzstre
     stream_ptr = std::make_unique<igzstream>(file_name.c_str());
 }
 
-auto FastQReader::getNextRecord(FqInfo& record, igzstream& stream) -> FQReadState {
+auto FastQReader::getNextRecord(FqInfo& /*record*/, igzstream& /*stream*/) -> FQReadState {
     return FQReadState::End;
 }
 
@@ -319,7 +285,7 @@ FastQWriter::FastQWriter(const std::string& file_name) : m_file_name(file_name) 
 
 FastQWriter::~FastQWriter() = default;
 
-void FastQWriter::write(const FqInfoBatch& batch) {
+void FastQWriter::write(const FqInfoBatch& /*batch*/) {
     // Basic implementation - do nothing for now
 }
 

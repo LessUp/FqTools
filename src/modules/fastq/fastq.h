@@ -1,7 +1,14 @@
+/**
+ * @file fastq.h
+ * @brief FastQ记录的类与操作函数定义。
+ *
+ * 此头文件包含处理FastQ格式记录的类与函数，用于高效的序列数据处理与验证。
+ */
+
 #pragma once
 
-// 在完全模块化可行之前，暂时使用传统头文件
-// export module fq.fastq;
+// 传统头文件使用，尚未模块化
+// export module fq.fastq;  // 当前尚不支持此模块导出
 
 #include <memory>
 #include <string>
@@ -20,7 +27,12 @@
 // import fq.error;
 
 namespace fq::fastq {
-    // 零拷贝FastQ记录
+    /**
+     * @class FqRecord
+     * @brief 零拷贝FastQ记录。
+     *
+     * 使用共享缓冲区减少内存拷贝，提供序列和质量值的高效访问。
+     */
     class FqRecord : public fq::core::WithID, public fq::core::MemoryTrackable, public fq::core::Validatable {
     public:
         FqRecord() = default;
@@ -145,7 +157,12 @@ namespace fq::fastq {
         }
     };
 
-    // 可修改的FastQ记录
+    /**
+     * @class MutableFqRecord
+     * @brief 可修改的FastQ记录。
+     *
+     * 提供对FastQ记录的可修改接口，支持序列和质量的修改操作。
+     */
     class MutableFqRecord : public fq::core::WithID, public fq::core::MemoryTrackable, public fq::core::Validatable {
     public:
         MutableFqRecord() = default;
@@ -324,7 +341,12 @@ namespace fq::fastq {
                        quality_offset, quality_length);
     }
 
-    // 批处理容器
+    /**
+     * @class FqBatchT
+     * @brief FastQ记录的批处理容器。
+     *
+     * 提供批量管理和处理FastQ记录的功能，支持迭代和容量管理。
+     */
     template<typename RecordType>
     class FqBatchT : public fq::core::WithID, public fq::core::MemoryTrackable {
     public:
@@ -451,7 +473,12 @@ namespace fq::fastq {
     using FqBatch = FqBatchT<FqRecord>;
     using MutableFqBatch = FqBatchT<MutableFqRecord>;
 
-    // 文件属性推断
+    /**
+     * @struct FileAttributes
+     * @brief 推断的FastQ文件属性。
+     *
+     * 包含估算的读长、质量评分类型、GC含量等文件属性信息。
+     */
     struct FileAttributes {
         std::uint32_t read_length = 0;
         fq::core::QScoreType q_score_type = fq::core::QScoreType::Unknown;

@@ -30,15 +30,6 @@ constexpr int FASTQ_LINES_PER_RECORD = 4;
 
 namespace common
 {
-/**
- * @brief 按分隔符分割字符串
- * @details 将输入字符串按指定分隔符分割成多个子字符串
- *
- * @param s 输入字符串
- * @param tokens 输出的子字符串向量
- * @param delim 分隔符，默认为空格
- */
-void split(std::string_view s, std::vector<std::string> &tokens, std::string_view delim = " ");
 
 /**
  * @brief 获取当前时间字符串
@@ -58,15 +49,6 @@ auto getCurrentTime(const std::string &fmt = "%Y-%m-%d %H:%M:%S") -> std::string
  */
 auto trimSpace(std::string_view str) -> std::string;
 
-/**
- * @brief 按字符分割字符串
- * @details 将输入字符串按指定字符分割成多个子字符串
- *
- * @param s 输入字符串
- * @param delimiter 分割字符
- * @return 分割后的子字符串向量
- */
-auto split(std::string_view s, char delimiter) -> std::vector<std::string>;
 
 /**
  * @brief 计时器类
