@@ -1,3 +1,17 @@
+/**
+ * @file fq_statistic.h
+ * @brief Implements the fq_statistic class for handling FASTQ statistics.
+ * 
+ * This file contains the implementation of the fq_statistic class, which
+ * manages the complete process of generating FASTQ statistic outputs,
+ * utilizing the TBB pipeline to enhance performance.
+ * 
+ * @author Shane
+ * @date 2023-10-05
+ * @version 1.0
+ * @copyright (c) 2023 Shane. All rights reserved.
+ */
+
 #pragma once
 
 #include "core_legacy/core.h"

@@ -1,8 +1,25 @@
+/**
+ * @file fq_statistic.cpp
+ * @brief FASTQ 统计功能实现文件
+ * @details 包含 fq_statistic 类及相关统计方法的实现，支持 TBB 并行统计。
+ * @author FastQTools Team
+ * @date 2025-08-01
+ * @version 1.0
+ * @copyright Copyright (c) 2025 FastQTools
+ */
+
 #include "statistics/fq_statistic.h"
 
 #include "statistics/fq_statistic_worker.h"
 
 namespace fq::statistic {
+
+/**
+ * @brief 统计结果累加操作符重载
+ * @details 将另一个 fq_statisticResult 的统计数据累加到当前对象
+ * @param other 另一个统计结果
+ * @return 当前对象的引用
+ */
 auto fq_statisticResult::operator+=(const fq_statisticResult& other) -> fq_statisticResult& {
     this->n_read += other.n_read;
     // Add other members here when the struct is expanded
@@ -25,20 +42,37 @@ auto fq_statisticResult::operator+=(const fq_statisticResult& other) -> fq_stati
 namespace fq::statistic {
 
 // Helper function to calculate error rate from quality scores remains the same
+/**
+ * @brief 计算每个位点的错误率
+ * @details 根据质量分数统计，计算每个位点的平均错误率
+ * @param n_pos_qual 每个位点各质量分数的计数
+ * @param n_read 总读取数
+ * @return 平均错误率
+ */
 static auto calErrPerPos(const std::vector<uint64_t>& n_pos_qual, uint64_t n_read) -> double {
     if (n_read == 0)
         return 0.0;
-        double err_per_pos = 0.0;
+    
+    double err_per_pos = 0.0;
     for (int i = 0; i < fq::fastq::MAX_QUAL; ++i) {
         err_per_pos += static_cast<double>(n_pos_qual[i]) * pow(10, -0.1 * i);
     }
     return err_per_pos / static_cast<double>(n_read);
 }
 
+/**
+ * @brief fq_statistic 构造函数
+ * @details 初始化统计参数和输入文件推断对象
+ * @param options 统计选项
+ */
 fq_statistic::fq_statistic(const StatisticOptions& options) : m_options(options) {
     m_fq_infer = std::make_shared<fq::fastq::FastQInfer>(m_options.input_fastq);
 }
 
+/**
+ * @brief 执行 FASTQ 统计主流程（TBB 并行）
+ * @details 包括输入校验、并行流水线构建及最终结果聚合
+ */
 void fq_statistic::run() {
     spdlog::info("Starting FASTQ statistics generation for '{}' using TBB pipeline.", m_options.input_fastq);
 
