@@ -1,10 +1,27 @@
-export module fq.core;
+#pragma once
 
-import std;
-import fq.common;
-import fq.error;
+// 在完全模块化可行之前，暂时使用传统头文件
+// export module fq.core;
 
-export namespace fq::core {
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <ranges>
+#include <chrono>
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
+
+#include "../common/common.h"
+#include "../error/error.h"
+
+// import fq.common;
+// import fq.error;
+
+namespace fq::core {
     // 基础ID类型
     using ReadID = std::uint64_t;
     using BatchID = std::uint32_t;

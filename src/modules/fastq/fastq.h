@@ -1,11 +1,25 @@
-export module fq.fastq;
+#pragma once
 
-import std;
-import fq.core;
-import fq.io;
-import fq.error;
+// 在完全模块化可行之前，暂时使用传统头文件
+// export module fq.fastq;
 
-export namespace fq::fastq {
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
+#include <optional>
+#include <span>
+#include <algorithm>
+
+#include "../core/core.h"
+#include "../io/io.h"
+#include "../error/error.h"
+
+// import fq.core;
+// import fq.io;
+// import fq.error;
+
+namespace fq::fastq {
     // 零拷贝FastQ记录
     class FqRecord : public fq::core::WithID, public fq::core::MemoryTrackable, public fq::core::Validatable {
     public:

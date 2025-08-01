@@ -1,10 +1,24 @@
-export module fq.io;
+#pragma once
 
-import std;
-import fq.core;
-import fq.error;
+// 在完全模块化可行之前，暂时使用传统头文件
+// export module fq.io;
 
-export namespace fq::io {
+#include <memory>
+#include <span>
+#include <string_view>
+#include <cstddef>
+#include <vector>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+
+#include "../core/core.h"
+#include "../error/error.h"
+
+// import fq.core;
+// import fq.error;
+
+namespace fq::io {
     // 缓冲区接口
     class Buffer : public fq::core::MemoryTrackable {
     public:
