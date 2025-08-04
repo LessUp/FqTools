@@ -35,8 +35,30 @@ namespace fq::fastq {
      */
     class FqRecord : public fq::core::WithID, public fq::core::MemoryTrackable, public fq::core::Validatable {
     public:
+        /**
+         * @brief 默认构造函数
+         * @details 创建空的FqRecord实例
+         * 
+         * @post 空的FqRecord实例被创建
+         */
         FqRecord() = default;
         
+        /**
+         * @brief 参数化构造函数
+         * @details 使用共享缓冲区和偏移量创建FqRecord实例
+         * 
+         * @param buffer 共享缓冲区指针
+         * @param name_offset 名称偏移量
+         * @param name_length 名称长度
+         * @param sequence_offset 序列偏移量
+         * @param sequence_length 序列长度
+         * @param quality_offset 质量偏移量
+         * @param quality_length 质量长度
+         * @pre buffer必须是有效的共享指针
+         * @pre 所有偏移量和长度必须在缓冲区范围内
+         * @post FqRecord实例被创建并初始化
+         * @throw FastQException 如果偏移量验证失败
+         */
         explicit FqRecord(std::shared_ptr<fq::io::SharedBuffer> buffer,
                          std::size_t name_offset, std::size_t name_length,
                          std::size_t sequence_offset, std::size_t sequence_length,
@@ -165,8 +187,27 @@ namespace fq::fastq {
      */
     class MutableFqRecord : public fq::core::WithID, public fq::core::MemoryTrackable, public fq::core::Validatable {
     public:
+        /**
+         * @brief 默认构造函数
+         * @details 创建空的MutableFqRecord实例
+         * 
+         * @post 空的MutableFqRecord实例被创建
+         */
         MutableFqRecord() = default;
         
+        /**
+         * @brief 参数化构造函数
+         * @details 使用名称、序列和质量字符串创建MutableFqRecord实例
+         * 
+         * @param name 序列名称
+         * @param sequence 序列字符串
+         * @param quality 质量字符串
+         * @pre sequence和quality长度必须相同
+         * @pre sequence必须是有效的DNA序列
+         * @pre quality必须是有效的质量字符串
+         * @post MutableFqRecord实例被创建并初始化
+         * @throw FastQException 如果数据验证失败
+         */
         MutableFqRecord(std::string name, std::string sequence, std::string quality)
             : m_name(std::move(name))
             , m_sequence(std::move(sequence))

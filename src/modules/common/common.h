@@ -192,14 +192,18 @@ class IDGenerator {
 };
 
 /**
- * @brief 打印软件的基本信息。
- * @details 在控制台输出软件名称、版本号和版权信息。
+ * @brief 打印软件基本信息
+ * @details 在控制台输出软件名称、版本号和版权信息
+ * 
+ * @post 软件信息被输出到标准输出
  */
 void print_software_info();
 
 /**
- * @brief 打印软件的ASCII艺术Logo。
- * @details 在控制台输出一个由ASCII字符组成的Logo，用于启动时展示。
+ * @brief 打印软件的ASCII艺术Logo
+ * @details 在控制台输出一个由ASCII字符组成的Logo，用于启动时展示
+ * 
+ * @post Logo被输出到标准输出
  */
 void print_logo();
 }  // namespace fq::common

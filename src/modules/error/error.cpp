@@ -110,6 +110,12 @@ auto FastQException::severity_string(ErrorSeverity sev) const -> std::string_vie
     }
 }
 
+/**
+ * @brief 格式化异常消息
+ * @details 将错误类别、严重性和消息组合成格式化的异常消息
+ * 
+ * @post 格式化后的消息存储在 m_what_message 中
+ */
 void FastQException::format_what_message() {
     m_what_message = fmt::format("[{}:{}] {}", category_string(m_category), severity_string(m_severity), m_message);
 }

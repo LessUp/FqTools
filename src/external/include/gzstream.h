@@ -1,3 +1,17 @@
+/**
+ * @file gzstream.h
+ * @brief gzip 压缩流处理类
+ * @details 该文件提供了基于 zlib 的 gzip 压缩文件流处理类，
+ *          支持 gzip 格式文件的读取和写入操作，继承自标准库的 iostream
+ * 
+ * @author FastQTools Team
+ * @date 2024
+ * @version 1.0
+ * 
+ * @copyright Copyright (c) 2024 FastQTools
+ * @license MIT License
+ */
+
 #ifndef GZSTREAM_H
 #define GZSTREAM_H
 
@@ -6,6 +20,14 @@
 #include <string>
 #include <zlib.h>
 
+/**
+ * @brief gzip 输入流类
+ * @details 该类继承自 std::istream，提供对 gzip 压缩文件的读取功能
+ *          支持标准的输入流操作，自动解压读取的数据
+ * 
+ * @note 使用前需要确保 zlib 库已正确安装
+ * @warning 不支持多线程并发读取同一文件
+ */
 class igzstream : public std::istream {
 public:
     igzstream() : std::istream(nullptr), buffer(nullptr) {}
@@ -65,6 +87,14 @@ private:
     gzstreambuf* buffer;
 };
 
+/**
+ * @brief gzip 输出流类
+ * @details 该类继承自 std::ostream，提供对 gzip 压缩文件的写入功能
+ *          支持标准的输出流操作，自动压缩写入的数据
+ * 
+ * @note 使用前需要确保 zlib 库已正确安装
+ * @warning 不支持多线程并发写入同一文件
+ */
 class ogzstream : public std::ostream {
 public:
     ogzstream() : std::ostream(nullptr), buffer(nullptr) {}
