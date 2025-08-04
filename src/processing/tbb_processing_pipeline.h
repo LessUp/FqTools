@@ -22,7 +22,7 @@ namespace fq::processing
  * - 自动背压控制
  * - 完善的错误处理和恢复机制
  */
-class tbb_processing_pipeline : public i_processingPipeline
+class TbbProcessingPipeline : public IProcessingPipeline
 {
 public:
     /**
@@ -50,10 +50,10 @@ public:
      * @param config 流水线配置
      * @param memory_manager 内存管理器（可选，不提供则创建默认的）
      */
-    explicit tbb_processing_pipeline(const Config &config = Config{},
+    explicit TbbProcessingPipeline(const Config &config = Config{},
                                    std::shared_ptr<fq::memory::batch_memory_manager> memory_manager = nullptr);
 
-    ~tbb_processing_pipeline() override;
+    ~TbbProcessingPipeline() override;
 
     // i_processingPipeline 接口实现
     void setInput(const std::string &input_path) override;
@@ -144,8 +144,8 @@ private:
 /**
  * @brief 创建TBB处理流水线的工厂函数
  */
-auto create_tbb_pipeline(const tbb_processing_pipeline::Config &config = tbb_processing_pipeline::Config{},
+auto create_tbb_pipeline(const TbbProcessingPipeline::Config &config = TbbProcessingPipeline::Config{},
                          std::shared_ptr<fq::memory::batch_memory_manager> memory_manager = nullptr)
-    -> std::unique_ptr<i_processingPipeline>;
+    -> std::unique_ptr<IProcessingPipeline>;
 
 } // namespace fq::processing

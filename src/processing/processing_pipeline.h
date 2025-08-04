@@ -82,20 +82,20 @@ struct ProcessingStatistics {
  * @invariant 配置设置必须在运行前完成
  * @warning 处理大文件时建议使用并行模式以提高性能
  */
-class processing_pipeline : public i_processingPipeline { // Inherit from interface
+class ProcessingPipeline : public IProcessingPipeline { // Inherit from interface
 public:
     /**
      * @brief 默认构造函数
      * @details 初始化处理管道，设置默认配置
      * @post 管道处于就绪状态，可以接受配置
      */
-    processing_pipeline();
+    ProcessingPipeline();
     
     /**
      * @brief 析构函数
      * @details 清理所有资源，确保文件句柄正确关闭
      */
-    ~processing_pipeline();
+    ~ProcessingPipeline();
 
     /**
      * @brief 设置输入文件路径

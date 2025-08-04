@@ -1,5 +1,4 @@
-#ifndef FASTQTOOLS_CONVEYOR_H
-#define FASTQTOOLS_CONVEYOR_H
+#pragma once
 
 /**
  * @file conveyor.h
@@ -182,5 +181,3 @@ private:
 };
 
 } // namespace fq::common
-
-#endif // FASTQTOOLS_CONVEYOR_H
