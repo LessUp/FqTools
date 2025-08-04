@@ -1,18 +1,18 @@
-#include "statistics/fq_statistic_worker.h"
+#include "statistics/FqStatisticWorker.h"
 #include "statistics/fq_statistic.h"
 #include "core_legacy/core.h"
 
 namespace fq::statistic {
 
-fq_statistic_worker::fq_statistic_worker(std::shared_ptr<fq::fastq::FastQInfer> fq_infer)
+FqStatisticWorker::FqStatisticWorker(std::shared_ptr<fq::fastq::FastQInfer> fq_infer)
     : m_fq_infer(std::move(fq_infer)) {
     if (m_fq_infer) {
         m_qual_offset = m_fq_infer->getFqFileAttribution().q_score_type == fq::fastq::QScoreType::Sanger ? 33 : 64;
     }
 }
 
-auto fq_statistic_worker::stat(const Batch& batch) -> i_statistic::Result {
-    fq_statisticResult result;
+auto FqStatisticWorker::stat(const Batch& batch) -> IStatistic::Result {
+    FqStatisticResult result;
     if (batch.reads.empty()) {
         return result;
     }

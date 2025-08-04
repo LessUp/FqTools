@@ -20,23 +20,23 @@
 namespace fq::statistic {
 
 // Forward declaration
-struct fq_statisticResult;
+struct FqStatisticResult;
 
 /**
  * @brief Abstract interface for statistic computation.
  * 
- * The i_statistic class provides an interface for implementing various
+ * The IStatistic class provides an interface for implementing various
  * statistical analyses over batches of fastq data. Users must implement
  * the stat() method to define the specific statistics to be computed.
  * 
  * @note Users should extend this interface to perform custom statistical
  *       analysis relevant to their use case.
  */
-class i_statistic : public fq::common::WithID {
+class IStatistic : public fq::common::WithID {
 public:
     using Batch = fq::fastq::FqInfoBatch;
-    using Result = fq_statisticResult;
-    ~i_statistic() override = default;
+    using Result = FqStatisticResult;
+    ~IStatistic() override = default;
     /**
      * @brief Compute statistics for a given batch of fastq data.
      * @param batch The batch of fastq information to process.

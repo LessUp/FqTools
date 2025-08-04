@@ -1,26 +1,26 @@
 /**
- * @file fq_statistic.cpp
+ * @file FqStatistic.cpp
  * @brief FASTQ 统计功能实现文件
- * @details 包含 fq_statistic 类及相关统计方法的实现，支持 TBB 并行统计。
+ * @details 包含 FqStatistic 类及相关统计方法的实现，支持 TBB 并行统计。
  * @author FastQTools Team
  * @date 2025-08-01
  * @version 1.0
  * @copyright Copyright (c) 2025 FastQTools
  */
 
-#include "statistics/fq_statistic.h"
+#include "statistics/FqStatistic.h"
 
-#include "statistics/fq_statistic_worker.h"
+#include "statistics/FqStatistic_worker.h"
 
 namespace fq::statistic {
 
 /**
  * @brief 统计结果累加操作符重载
- * @details 将另一个 fq_statisticResult 的统计数据累加到当前对象
+ * @details 将另一个 FqStatisticResult 的统计数据累加到当前对象
  * @param other 另一个统计结果
  * @return 当前对象的引用
  */
-auto fq_statisticResult::operator+=(const fq_statisticResult& other) -> fq_statisticResult& {
+auto FqStatisticResult::operator+=(const FqStatisticResult& other) -> FqStatisticResult& {
     this->n_read += other.n_read;
     // Add other members here when the struct is expanded
     return *this;
@@ -61,11 +61,11 @@ static auto calErrPerPos(const std::vector<uint64_t>& n_pos_qual, uint64_t n_rea
 }
 
 /**
- * @brief fq_statistic 构造函数
+ * @brief FqStatistic 构造函数
  * @details 初始化统计参数和输入文件推断对象
  * @param options 统计选项
  */
-fq_statistic::fq_statistic(const StatisticOptions& options) : m_options(options) {
+FqStatistic::FqStatistic(const StatisticOptions& options) : m_options(options) {
     m_fq_infer = std::make_shared<fq::fastq::FastQInfer>(m_options.input_fastq);
 }
 
@@ -73,7 +73,7 @@ fq_statistic::fq_statistic(const StatisticOptions& options) : m_options(options)
  * @brief 执行 FASTQ 统计主流程（TBB 并行）
  * @details 包括输入校验、并行流水线构建及最终结果聚合
  */
-void fq_statistic::run() {
+void FqStatistic::run() {
     spdlog::info("Starting FASTQ statistics generation for '{}' using TBB pipeline.", m_options.input_fastq);
 
     const auto& attrib = m_fq_infer->getFqFileAttribution();
@@ -82,7 +82,7 @@ void fq_statistic::run() {
     }
 
     // The final result, captured by the aggregation stage
-    fq_statisticResult final_result;
+    FqStatisticResult final_result;
 
     // The pipeline will manage its own concurrency.
     // The number of "tokens" controls the level of parallelism.
@@ -111,19 +111,19 @@ void fq_statistic::run() {
             }) &
             // Stage 2: Processing Filter (Parallel)
             // Takes a batch, processes it, and returns a partial result.
-            tbb::make_filter<std::shared_ptr<fq::fastq::FqInfoBatch>, fq_statisticResult>(
+            tbb::make_filter<std::shared_ptr<fq::fastq::FqInfoBatch>, FqStatisticResult>(
                 tbb::filter_mode::parallel,
-                [this](std::shared_ptr<fq::fastq::FqInfoBatch> batch) -> fq_statisticResult {
+                [this](std::shared_ptr<fq::fastq::FqInfoBatch> batch) -> FqStatisticResult {
                     if (!batch)
-                        return fq_statisticResult();
-                    fq_statistic_worker worker(m_fq_infer);
+                        return FqStatisticResult();
+                    FqStatistic_worker worker(m_fq_infer);
                     return worker.stat(*batch);
                 }) &
             // Stage 3: Aggregation Filter (Serial)
             // Takes partial results and accumulates them into a final result.
-            tbb::make_filter<fq_statisticResult, void>(
+            tbb::make_filter<FqStatisticResult, void>(
                 tbb::filter_mode::serial_in_order,
-                [&final_result](const fq_statisticResult& partial_result) { final_result += partial_result; }));
+                [&final_result](const FqStatisticResult& partial_result) { final_result += partial_result; }));
 
     spdlog::info("TBB pipeline finished. Aggregated results from all batches.");
 
@@ -131,7 +131,7 @@ void fq_statistic::run() {
     spdlog::info("Statistics report saved to '{}'", m_options.output_stat);
 }
 
-void fq_statistic::writeResult(const fq_statisticResult& result) {
+void FqStatistic::writeResult(const FqStatisticResult& result) {
     std::ofstream writer(m_options.output_stat);
     if (!writer) {
         throw fq::exception("Failed to open output statistics file: " + m_options.output_stat);
