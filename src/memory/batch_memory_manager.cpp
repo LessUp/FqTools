@@ -1,4 +1,4 @@
-#include "batch_memory_manager.h"
+#include "BatchMemoryManager.h"
 #include <iostream>
 #include <thread>
 #include <algorithm>
@@ -142,10 +142,10 @@ auto FqInfoBatchPool::create_object() -> std::unique_ptr<fq::fastq::FqInfoBatch>
 }
 
 //==============================================================================
-// batch_memory_manager Implementation
+// BatchMemoryManager Implementation
 //==============================================================================
 
-batch_memory_manager::batch_memory_manager(const Config& config)
+BatchMemoryManager::BatchMemoryManager(const Config& config)
     : m_config(config) {
     
     // 创建批处理池
@@ -160,19 +160,19 @@ batch_memory_manager::batch_memory_manager(const Config& config)
     }
 }
 
-batch_memory_manager::~batch_memory_manager() {
+BatchMemoryManager::~BatchMemoryManager() {
     stop_shrink_thread();
 }
 
-auto batch_memory_manager::acquire_batch() -> std::unique_ptr<fq::fastq::FqInfoBatch> {
+auto BatchMemoryManager::acquire_batch() -> std::unique_ptr<fq::fastq::FqInfoBatch> {
     return m_batch_pool->acquire();
 }
 
-void batch_memory_manager::release_batch(std::unique_ptr<fq::fastq::FqInfoBatch> batch) {
+void BatchMemoryManager::release_batch(std::unique_ptr<fq::fastq::FqInfoBatch> batch) {
     m_batch_pool->release(std::move(batch));
 }
 
-auto batch_memory_manager::get_memory_usage() const noexcept -> size_t {
+auto BatchMemoryManager::get_memory_usage() const noexcept -> size_t {
     // 简化的内存使用计算
     size_t pool_size = m_batch_pool->pool_size();
     size_t active_count = m_batch_pool->active_count();
@@ -183,19 +183,19 @@ auto batch_memory_manager::get_memory_usage() const noexcept -> size_t {
     return (pool_size + active_count) * estimated_batch_size / (1024 * 1024); // MB
 }
 
-auto batch_memory_manager::get_active_objects() const noexcept -> size_t {
+auto BatchMemoryManager::get_active_objects() const noexcept -> size_t {
     return m_batch_pool->active_count();
 }
 
-auto batch_memory_manager::get_batch_pool_stats() const -> FqInfoBatchPool::MemoryStats {
+auto BatchMemoryManager::get_batch_pool_stats() const -> FqInfoBatchPool::MemoryStats {
     return m_batch_pool->get_stats();
 }
 
-auto batch_memory_manager::get_config() const noexcept -> const batch_memory_manager::Config& {
+auto BatchMemoryManager::get_config() const noexcept -> const BatchMemoryManager::Config& {
     return m_config;
 }
 
-void batch_memory_manager::update_config(const Config& config) {
+void BatchMemoryManager::update_config(const Config& config) {
     bool was_auto_shrink = m_config.enable_auto_shrink;
     m_config = config;
     
@@ -207,12 +207,12 @@ void batch_memory_manager::update_config(const Config& config) {
     }
 }
 
-void batch_memory_manager::optimize() {
+void BatchMemoryManager::optimize() {
     // 执行内存优化
     m_batch_pool->shrink();
 }
 
-void batch_memory_manager::shrink_worker() {
+void BatchMemoryManager::shrink_worker() {
     while (!m_stop_shrinking) {
         std::this_thread::sleep_for(m_config.shrink_interval);
         
@@ -228,13 +228,13 @@ void batch_memory_manager::shrink_worker() {
     }
 }
 
-void batch_memory_manager::start_shrink_thread() {
+void BatchMemoryManager::start_shrink_thread() {
     if (!m_shrink_thread.joinable()) {
-        m_shrink_thread = std::thread(&batch_memory_manager::shrink_worker, this);
+        m_shrink_thread = std::thread(&BatchMemoryManager::shrink_worker, this);
     }
 }
 
-void batch_memory_manager::stop_shrink_thread() {
+void BatchMemoryManager::stop_shrink_thread() {
     if (m_shrink_thread.joinable()) {
         m_stop_shrinking = true;
         m_shrink_thread.join();
@@ -246,20 +246,20 @@ void batch_memory_manager::stop_shrink_thread() {
 //==============================================================================
 
 namespace {
-    std::shared_ptr<batch_memory_manager> g_global_memory_manager;
+    std::shared_ptr<BatchMemoryManager> g_global_memory_manager;
     std::mutex g_memory_manager_mutex;
 }
 
-auto global_memory_manager() -> std::shared_ptr<batch_memory_manager> {
+auto global_memory_manager() -> std::shared_ptr<BatchMemoryManager> {
     std::lock_guard<std::mutex> lock(g_memory_manager_mutex);
     return g_global_memory_manager;
 }
 
-void init_global_memory_manager(const batch_memory_manager::Config& config) {
+void init_global_memory_manager(const BatchMemoryManager::Config& config) {
     std::lock_guard<std::mutex> lock(g_memory_manager_mutex);
     
     if (!g_global_memory_manager) {
-        g_global_memory_manager = std::make_shared<batch_memory_manager>(config);
+        g_global_memory_manager = std::make_shared<BatchMemoryManager>(config);
     }
 }
 

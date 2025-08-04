@@ -201,7 +201,7 @@ private:
  * @invariant 内存使用量不超过配置的最大限制
  * @warning 该类设计为单例模式，不建议创建多个实例
  */
-class batch_memory_manager {
+class BatchMemoryManager {
 public:
     /**
      * @brief 配置结构体
@@ -237,20 +237,20 @@ public:
      * @post 内存管理器被初始化并准备使用
      * @throw std::invalid_argument 如果配置参数无效
      */
-    explicit batch_memory_manager(const Config& config = Config{});
+    explicit BatchMemoryManager(const Config& config = Config{});
     
     /**
      * @brief 析构函数
      * @details 清理所有资源，包括对象池和后台线程
      * @post 所有资源被正确释放
      */
-    ~batch_memory_manager();
+    ~BatchMemoryManager();
 
     // 禁用拷贝和移动，确保线程安全
-    batch_memory_manager(const batch_memory_manager&) = delete;
-    auto operator=(const batch_memory_manager&) -> batch_memory_manager& = delete;
-    batch_memory_manager(batch_memory_manager&&) = delete;
-    auto operator=(batch_memory_manager&&) -> batch_memory_manager& = delete;
+    BatchMemoryManager(const BatchMemoryManager&) = delete;
+    auto operator=(const BatchMemoryManager&) -> BatchMemoryManager& = delete;
+    BatchMemoryManager(BatchMemoryManager&&) = delete;
+    auto operator=(BatchMemoryManager&&) -> BatchMemoryManager& = delete;
 
     /**
      * @brief 获取一个 FqInfoBatch 对象
@@ -361,13 +361,13 @@ private:
 };
 
 /**
- * @brief 全局内存管理器访问器
- * @details 获取全局内存管理器实例的单例访问器
+ * @brief 获取全局内存管理器实例
+ * @details 获取全局内存管理器的单例实例
  * 
- * @return std::shared_ptr<batch_memory_manager> 全局内存管理器的共享指针
+ * @return std::shared_ptr<BatchMemoryManager> 全局内存管理器的共享指针
  * @note 如果未初始化，会自动创建默认配置的实例
  */
-auto global_memory_manager() -> std::shared_ptr<batch_memory_manager>;
+auto global_memory_manager() -> std::shared_ptr<BatchMemoryManager>;
 
 /**
  * @brief 初始化全局内存管理器
@@ -377,7 +377,7 @@ auto global_memory_manager() -> std::shared_ptr<batch_memory_manager>;
  * @post 全局内存管理器被初始化
  * @warning 如果已存在实例，会被替换
  */
-void init_global_memory_manager(const batch_memory_manager::Config& config = batch_memory_manager::Config{});
+void init_global_memory_manager(const BatchMemoryManager::Config& config = BatchMemoryManager::Config{});
 
 /**
  * @brief 清理全局内存管理器
