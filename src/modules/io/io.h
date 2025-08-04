@@ -1,8 +1,14 @@
 /**
  * @file io.h
  * @brief 输入输出相关的类与工具函数定义。
- *
- * 提供文件读取、缓冲管理、异步I/O等功能。
+ * @details 提供文件读取、缓冲管理、异步I/O等功能。
+ * 
+ * @author FastQTools Team
+ * @date 2024
+ * @version 1.0
+ * 
+ * @copyright Copyright (c) 2024 FastQTools
+ * @license MIT License
  */
 
 #pragma once

@@ -36,9 +36,9 @@ struct StatisticOptions {
  * @brief Abstract interface for a high-level statistic calculation task.
  * This decouples the command-line layer from the statistics implementation.
  */
-class i_statisticCalculator {
+class IStatisticCalculator {
 public:
-    virtual ~i_statisticCalculator() = default;
+    virtual ~IStatisticCalculator() = default;
 
     /**
      * @brief Executes the entire statistics generation process.
@@ -49,8 +49,8 @@ public:
 /**
  * @brief factory function to create an instance of a statistic calculator.
  * @param options The configuration for the calculation task.
- * @return A unique_ptr to an object implementing the i_statisticCalculator interface.
+ * @return A unique_ptr to an object implementing the IStatisticCalculator interface.
  */
-auto create_statistic_calculator(const StatisticOptions& options) -> std::unique_ptr<i_statisticCalculator>;
+auto create_statistic_calculator(const StatisticOptions& options) -> std::unique_ptr<IStatisticCalculator>;
 
 } // namespace fq::statistic

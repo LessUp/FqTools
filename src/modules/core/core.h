@@ -1,8 +1,14 @@
 /**
  * @file core.h
  * @brief 核心功能组件定义。
- *
- * 提供FastQ数据处理的基础类和工具，包括ID管理、序列和质量验证等功能。
+ * @details 提供FastQ数据处理的基础类和工具，包括ID管理、序列和质量验证等功能。
+ * 
+ * @author FastQTools Team
+ * @date 2024
+ * @version 1.0
+ * 
+ * @copyright Copyright (c) 2024 FastQTools
+ * @license MIT License
  */
 
 #pragma once
