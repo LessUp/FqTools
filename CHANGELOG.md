@@ -5,15 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.2] - 2025-08-04
+
+### Added
+- **[文档]** 为缺失注释的函数/方法补全了完整的 Doxygen 注释，大幅提高了代码文档覆盖率
+- **[代码质量]** 统一了函数注释风格，确保所有公共接口方法都有完整的中文注释
+- **[文档规范]** 为构造函数、析构函数和公共接口方法添加了标准的 Doxygen 注释
+- **[API文档]** 特别关注了以下关键模块的函数注释完善：
+  - `src/modules/error/error.h` - 错误处理类的构造函数和方法
+  - `src/modules/config/config.h` - 配置管理类的公共接口方法
+  - `src/modules/common/common.h` - 通用工具函数
+  - `src/processing/predicates/min_quality_predicate.h` - 质量过滤器类的方法
+  - `src/cli/commands/stat_command.h` - 统计命令类的接口方法
+  - `src/cli/commands/filter_command.h` - 过滤命令类的构造函数和接口方法
+  - `src/memory/batch_memory_manager.h` - 内存管理器的全局函数
+  - `src/modules/fastq/fastq.h` - FastQ记录类的构造函数
+  - `src/modules/error/error.cpp` - 错误处理的私有方法
+
+### Changed
+- **[注释标准化]** 统一了函数注释的格式，包括 @brief、@details、@param、@return、@pre、@post、@throw 等标准标签
+- **[文档完整性]** 确保所有公共API都有完整的参数说明和返回值描述
+- **[代码可维护性]** 提高了代码文档的一致性和可读性
+
 ## [3.1.1] - 2025-08-01
+
+### Added
+- **[文档]** 为缺失注释的类/结构体补全了完整的 Doxygen 注释，提高了代码文档覆盖率
+- **[代码质量]** 统一了注释风格，确保所有注释都符合项目的中文文档标准
+- **[文档规范]** 为所有新增的注释添加了 @author、@date、@version、@copyright 等标准标签
 
 ### Changed
 - **[配置]** 更新了Claude配置文件，添加了新的构建脚本权限支持
 - **[构建系统]** 增强了构建脚本的错误处理和日志记录功能
+- **[代码文档]** 完善了以下头文件的类注释：
+  - `src/external/include/gzstream.h` - gzip 压缩流处理类
+  - `src/processing/predicates/min_quality_predicate.h` - 质量过滤器类
+  - `src/processing/mutators/quality_trimmer.h` - 序列修剪器类
+  - `src/statistics/fq_statistic.h` - 统计信息管理器类
+  - `src/statistics/fq_statistic_worker.h` - 统计信息工作器类
 
 ### Fixed
 - **[权限]** 修复了构建脚本中缺失的bash命令权限
 - **[工具链]** 完善了Clang和GCC构建脚本的权限配置
+- **[文档缺失]** 解决了部分类缺少完整 Doxygen 注释的问题，提高了代码可维护性
 
 ## [3.1.0] - 2025-08-01
 
