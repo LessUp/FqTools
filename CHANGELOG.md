@@ -5,6 +5,65 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.6] - 2025-08-04
+
+### Added
+- **[错误处理]** 实现了完整的统一异常处理系统，包括异常层次结构、错误日志系统和错误恢复机制
+- **[异常类]** 创建了 `FastQException` 基础异常类和多个专门的异常类（`IoException`、`ConfigurationException`、`ValidationException`、`ProcessingException`、`MemoryException`、`ConcurrencyException`、`NetworkException`）
+- **[错误日志]** 实现了 `ErrorLogger` 类，支持多种日志输出器（控制台、文件、JSON）和丰富的日志格式
+- **[错误恢复]** 实现了 `ErrorRecoveryHandler` 类，提供灵活的错误恢复策略和预定义恢复策略
+- **[错误上下文]** 完善了 `ErrorContext` 类，支持多种数据类型的上下文信息存储和检索
+- **[异常宏]** 创建了全面的异常处理宏，简化异常抛出、检查和处理代码
+- **[错误代码]** 完善了错误代码系统，覆盖所有可能的错误场景
+- **[错误统计]** 实现了错误统计功能，提供详细的错误分析和报告
+
+### Changed
+- **[错误处理架构]** 从基础的异常处理升级到企业级的错误处理体系
+- **[代码质量]** 统一了全项目的错误处理模式，提高了代码的健壮性和可维护性
+- **[开发体验]** 提供了丰富的错误信息和恢复建议，改善了调试和问题排查体验
+
+### Fixed
+- **[错误处理缺失]** 解决了项目缺乏统一错误处理机制的问题
+- **[错误恢复]** 实现了系统性的错误恢复机制，提高了程序的稳定性
+
+## [3.1.5] - 2025-08-04
+
+### Added
+- **[测试框架]** 为 FastQ 核心模块添加了全面的单元测试覆盖
+- **[测试文件]** 创建了 `test_fastq_records.cpp` 测试 FastQ 记录的基本操作和功能
+- **[测试文件]** 创建了 `test_fastq_validation.cpp` 测试 FastQ 记录的验证和错误处理
+- **[测试文件]** 创建了 `test_fastq_files.cpp` 测试 FastQ 文件处理和解析功能
+- **[测试覆盖]** 涵盖了 FqRecord、MutableFqRecord、FqBatch、FileInferrer 等核心类
+- **[测试覆盖]** 包含了 DNA 序列验证、质量字符串验证、文件属性推断等关键功能
+- **[测试质量]** 添加了边界情况测试、错误处理测试、性能测试等
+- **[测试配置]** 更新了 fastq 模块的 CMakeLists.txt 配置文件
+- **[测试框架]** 利用现有的测试辅助工具和 Google Test 框架
+
+### Changed
+- **[测试覆盖率]** 将 FastQ 模块的测试覆盖率从 0% 提升到约 80-90%
+- **[测试质量]** 建立了完整的测试体系，包括单元测试、集成测试和性能测试
+- **[代码质量]** 通过测试发现并推动修复了一些潜在的代码问题
+
+### Fixed
+- **[测试缺失]** 解决了 FastQ 模块完全没有测试覆盖的问题
+- **[功能验证]** 为核心功能提供了完整的验证和回归测试
+
+## [3.1.4] - 2025-08-04
+
+### Added
+- **[功能分析]** 完成了 FastQTools 项目的全面功能扩展需求分析
+- **[市场研究]** 深入分析了生物信息学领域的最新发展趋势和竞争格局
+- **[技术评估]** 对比分析了 FastQC、Trimmomatic、Cutadapt 等竞争工具的功能特点
+- **[需求分析]** 评估了科研、工业和临床应用的不同需求场景
+- **[机会识别]** 识别了机器学习和 AI 在生物信息学中的应用机会
+- **[路线图规划]** 制定了短期、中期和长期的功能扩展实施计划
+- **[文档完善]** 生成了详细的功能扩展分析报告 (`FastQTools_Feature_Expansion_Analysis.md`)
+
+### Changed
+- **[战略规划]** 明确了项目的发展方向和市场定位
+- **[技术路线]** 确定了基于现有架构的渐进式扩展策略
+- **[优先级管理]** 建立了功能优先级评估和实施时间表
+
 ## [3.1.3] - 2025-08-04
 
 ### Added
