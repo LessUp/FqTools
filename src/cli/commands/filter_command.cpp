@@ -25,9 +25,18 @@ FilterCommand::~FilterCommand() = default;
 
 auto FilterCommand::execute(int argc, char* argv[]) -> int {
     cxxopts::Options options(getName(), getDescription());
-    options.add_options()("i,input", "Input FASTQ file", cxxopts::value<std::string>())("o,output", "Output FASTQ file",
-                                                                                        cxxopts::value<std::string>())(
-        "t,threads", "Number of threads", cxxopts::value<size_t>()->default_value("1"))("h,help", "Print usage");
+    options.add_options()
+        ("i,input", "Input FASTQ file", cxxopts::value<std::string>())
+        ("o,output", "Output FASTQ file", cxxopts::value<std::string>())
+        ("t,threads", "Number of threads", cxxopts::value<size_t>()->default_value("1"))
+        ("quality-encoding", "Quality encoding offset (33 or 64)", cxxopts::value<int>()->default_value("33"))
+        ("min-quality", "Minimum average quality threshold", cxxopts::value<double>())
+        ("min-length", "Minimum read length", cxxopts::value<size_t>())
+        ("max-length", "Maximum read length", cxxopts::value<size_t>())
+        ("max-n-ratio", "Maximum N ratio (0.0-1.0)", cxxopts::value<double>())
+        ("trim-quality", "Trim bases below quality threshold", cxxopts::value<double>())
+        ("trim-mode", "Trim mode (both,five,three)", cxxopts::value<std::string>()->default_value("both"))
+        ("h,help", "Print usage");
 
     if (argc == 1) {
         std::cout << options.help() << std::endl;
@@ -53,7 +62,40 @@ auto FilterCommand::execute(int argc, char* argv[]) -> int {
     pipeline_config.thread_count = m_config->thread_count;
     m_pipeline->setConfig(pipeline_config);
 
-    m_pipeline->run();
+    // Wire predicates and mutators from CLI options
+    const int quality_encoding = result["quality-encoding"].as<int>();
+
+    if (result.count("min-quality")) {
+        double min_q = result["min-quality"].as<double>();
+        m_pipeline->addPredicate(std::make_unique<fq::processing::MinQualityPredicate>(min_q, quality_encoding));
+    }
+
+    if (result.count("min-length")) {
+        size_t min_len = result["min-length"].as<size_t>();
+        m_pipeline->addPredicate(std::make_unique<fq::processing::MinLengthPredicate>(min_len));
+    }
+
+    if (result.count("max-length")) {
+        size_t max_len = result["max-length"].as<size_t>();
+        m_pipeline->addPredicate(std::make_unique<fq::processing::MaxLengthPredicate>(max_len));
+    }
+
+    if (result.count("max-n-ratio")) {
+        double max_n = result["max-n-ratio"].as<double>();
+        m_pipeline->addPredicate(std::make_unique<fq::processing::MaxNRatioPredicate>(max_n));
+    }
+
+    if (result.count("trim-quality")) {
+        double trim_q = result["trim-quality"].as<double>();
+        std::string mode_str = result["trim-mode"].as<std::string>();
+        fq::processing::QualityTrimmer::TrimMode mode = fq::processing::QualityTrimmer::TrimMode::Both;
+        if (mode_str == "five") mode = fq::processing::QualityTrimmer::TrimMode::FivePrime;
+        else if (mode_str == "three") mode = fq::processing::QualityTrimmer::TrimMode::ThreePrime;
+        m_pipeline->addMutator(std::make_unique<fq::processing::QualityTrimmer>(trim_q, /*min_length*/1, mode, quality_encoding));
+    }
+
+    auto stats = m_pipeline->run();
+    std::cout << stats.toString() << std::endl;
 
     return 0;
 }
