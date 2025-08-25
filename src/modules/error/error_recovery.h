@@ -7,6 +7,8 @@
 #include <chrono>
 #include <map>
 
+#include "error_codes.h"
+
 namespace fq::error {
 
 // 前向声明

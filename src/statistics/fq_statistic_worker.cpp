@@ -1,4 +1,4 @@
-#include "statistics/FqStatisticWorker.h"
+#include "statistics/fq_statistic_worker.h"
 #include "statistics/fq_statistic.h"
 #include "core_legacy/core.h"
 

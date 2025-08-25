@@ -30,7 +30,15 @@ auto create_processing_pipeline() -> std::unique_ptr<IProcessingPipeline> {
  * @brief factory function for the high-performance TBB processing pipeline.
  */
 auto create_tbb_processing_pipeline() -> std::unique_ptr<IProcessingPipeline> {
-    return std::make_unique<fq::processing::TbbProcessingPipeline>();
+    // Delegate to unified factory with default config and memory manager
+    return create_tbb_pipeline();
+}
+
+/**
+ * @brief factory overload that accepts Config to match example usage.
+ */
+auto create_tbb_processing_pipeline(const TbbProcessingPipeline::Config& config) -> std::unique_ptr<IProcessingPipeline> {
+    return create_tbb_pipeline(config);
 }
 
 } // namespace fq::processing

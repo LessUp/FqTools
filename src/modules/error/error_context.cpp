@@ -12,6 +12,7 @@
  */
 
 #include "error_context.h"
+#include "error_logger.h"
 #include <algorithm>
 #include <thread>
 #include <chrono>
@@ -44,11 +45,11 @@ auto ErrorContext::add(const std::string& key, bool value) -> void {
 }
 
 auto ErrorContext::add_time(const std::string& key, std::time_t value) -> void {
-    m_context[key] = static_cast<int64_t>(value);
+    m_context[key] = static_cast<size_t>(value);
 }
 
 auto ErrorContext::add_line(const std::string& key, uint32_t value) -> void {
-    m_context[key] = static_cast<int32_t>(value);
+    m_context[key] = static_cast<size_t>(value);
 }
 
 auto ErrorContext::get(const std::string& key) const -> std::optional<ContextValue> {

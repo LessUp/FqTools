@@ -22,6 +22,7 @@
 #include <map>
 #include <sstream>
 #include <iomanip>
+#include <optional>
 
 #include "error_context.h"
 #include "error_codes.h"
@@ -206,6 +207,7 @@ public:
     // 设置上下文信息
     auto set_thread_context(const std::string& key, const std::string& value) -> void;
     auto remove_thread_context(const std::string& key) -> void;
+    auto get_thread_context(const std::string& key) const -> std::optional<std::string>;
     
     // 刷新所有输出器
     auto flush_all() -> void;

@@ -28,14 +28,14 @@ namespace {
     thread_local std::unordered_map<std::string, std::string> g_thread_context;
     
     // 获取线程ID字符串
-    auto get_thread_id() -> std::string {
+    auto detail_get_thread_id() -> std::string {
         std::ostringstream oss;
         oss << std::this_thread::get_id();
         return oss.str();
     }
     
     // 日志级别转换为字符串
-    auto log_level_to_string(LogLevel level) -> std::string {
+    auto detail_log_level_to_string(LogLevel level) -> std::string {
         switch (level) {
             case LogLevel::Debug:    return "DEBUG";
             case LogLevel::Info:     return "INFO";
@@ -47,7 +47,7 @@ namespace {
     }
     
     // 字符串转换为日志级别
-    auto string_to_log_level(const std::string& str) -> LogLevel {
+    auto detail_string_to_log_level(const std::string& str) -> LogLevel {
         if (str == "DEBUG")    return LogLevel::Debug;
         if (str == "INFO")     return LogLevel::Info;
         if (str == "WARNING")  return LogLevel::Warning;
@@ -56,6 +56,11 @@ namespace {
         return LogLevel::Info; // 默认级别
     }
 }
+
+// 与头文件声明匹配的公开函数实现
+auto get_thread_id() -> std::string { return detail_get_thread_id(); }
+auto log_level_to_string(LogLevel level) -> std::string { return detail_log_level_to_string(level); }
+auto string_to_log_level(const std::string& str) -> LogLevel { return detail_string_to_log_level(str); }
 
 // ErrorLogger 私有实现
 struct ErrorLogger::Impl {
@@ -234,6 +239,14 @@ auto ErrorLogger::set_thread_context(const std::string& key, const std::string& 
 
 auto ErrorLogger::remove_thread_context(const std::string& key) -> void {
     g_thread_context.erase(key);
+}
+
+auto ErrorLogger::get_thread_context(const std::string& key) const -> std::optional<std::string> {
+    auto it = g_thread_context.find(key);
+    if (it != g_thread_context.end()) {
+        return it->second;
+    }
+    return std::nullopt;
 }
 
 auto ErrorLogger::flush_all() -> void {
@@ -499,33 +512,6 @@ auto JsonAppender::append(const LogEntry& entry) -> void {
 auto JsonAppender::flush() -> void {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_file_stream.flush();
-}
-
-// 全局便利函数的实现
-auto get_thread_id() -> std::string {
-    std::ostringstream oss;
-    oss << std::this_thread::get_id();
-    return oss.str();
-}
-
-auto log_level_to_string(LogLevel level) -> std::string {
-    switch (level) {
-        case LogLevel::Debug:    return "DEBUG";
-        case LogLevel::Info:     return "INFO";
-        case LogLevel::Warning:  return "WARNING";
-        case LogLevel::Error:    return "ERROR";
-        case LogLevel::Critical: return "CRITICAL";
-        default:                 return "UNKNOWN";
-    }
-}
-
-auto string_to_log_level(const std::string& str) -> LogLevel {
-    if (str == "DEBUG")    return LogLevel::Debug;
-    if (str == "INFO")     return LogLevel::Info;
-    if (str == "WARNING")  return LogLevel::Warning;
-    if (str == "ERROR")    return LogLevel::Error;
-    if (str == "CRITICAL") return LogLevel::Critical;
-    return LogLevel::Info; // 默认级别
 }
 
 } // namespace fq::error

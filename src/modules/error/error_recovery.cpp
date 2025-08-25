@@ -4,6 +4,7 @@
 #include "error_logger.h"
 #include <thread>
 #include <chrono>
+#include <algorithm>
 
 namespace fq::error {
 
@@ -110,6 +111,9 @@ auto ErrorRecoveryHandler::update_stats(RecoveryResult result, ErrorCode code) -
             break;
         case RecoveryResult::Aborted:
             m_impl->stats.aborted_operations++;
+            break;
+        case RecoveryResult::Continue:
+            // 继续执行，无需统计
             break;
     }
 }

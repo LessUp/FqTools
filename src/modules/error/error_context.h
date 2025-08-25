@@ -20,6 +20,8 @@
 #include <optional>
 #include <sstream>
 #include <iomanip>
+#include <cstdint>
+#include <ctime>
 
 namespace fq::error {
 
@@ -95,6 +97,18 @@ public:
 
 private:
     ErrorContext m_context;
+};
+
+// 作用域上下文设置器（RAII），用于在作用域内设置线程上下文键值对
+class ContextScopeGuard {
+public:
+    ContextScopeGuard(const std::string& key, const std::string& value);
+    ~ContextScopeGuard();
+
+private:
+    std::string m_key;
+    std::string m_old_value;
+    bool m_had_value{false};
 };
 
 // 常用上下文键

@@ -51,7 +51,7 @@ public:
      * @param memory_manager 内存管理器（可选，不提供则创建默认的）
      */
     explicit TbbProcessingPipeline(const Config &config = Config{},
-                                   std::shared_ptr<fq::memory::batch_memory_manager> memory_manager = nullptr);
+                                   std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager = nullptr);
 
     ~TbbProcessingPipeline() override;
 
@@ -106,7 +106,7 @@ private:
     ProcessingConfig m_processing_config;
 
     // 内存管理
-    std::shared_ptr<fq::memory::batch_memory_manager> m_memory_manager;
+    std::shared_ptr<fq::memory::BatchMemoryManager> m_memory_manager;
     bool m_owns_memory_manager = false;
 
     // 处理器
@@ -145,7 +145,7 @@ private:
  * @brief 创建TBB处理流水线的工厂函数
  */
 auto create_tbb_pipeline(const TbbProcessingPipeline::Config &config = TbbProcessingPipeline::Config{},
-                         std::shared_ptr<fq::memory::batch_memory_manager> memory_manager = nullptr)
+                         std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager = nullptr)
     -> std::unique_ptr<IProcessingPipeline>;
 
 } // namespace fq::processing

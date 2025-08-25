@@ -1,4 +1,4 @@
-#include "BatchMemoryManager.h"
+#include "batch_memory_manager.h"
 #include <iostream>
 #include <thread>
 #include <algorithm>

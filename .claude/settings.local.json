@@ -44,7 +44,15 @@
       "Bash(./test:*)",
       "Bash(./build-clang.sh --release)",
       "Bash(conan:*)",
-      "Bash(./scripts/build-clang-simple.sh:*)"
+      "Bash(./scripts/build-clang-simple.sh:*)",
+      "Bash(clang++:*)",
+      "Bash(./build-clang-release/tests/fastq_tests:*)",
+      "Bash(./build-clang-release/tests/unit/test_common_module_new:*)",
+      "Bash(./build-clang-release/tests/unit/test_common_timer --gtest_list_tests)",
+      "Bash(./build-clang-release/tests/unit/modules/test_common_module_new --gtest_list_tests)",
+      "Bash(./build-clang-release/tests/unit/modules/test_common_module_new:*)",
+      "Bash(./scripts/test.sh:*)",
+      "Bash(ctest:*)"
     ],
     "deny": []
   }

@@ -15,6 +15,7 @@
 #include <chrono>
 #include <algorithm>
 #include <thread>
+#include <limits>
 
 namespace fq::processing {
 
@@ -28,7 +29,7 @@ namespace fq::processing {
  * @param config 流水线配置
  * @param memory_manager 内存管理器指针
  */
-TbbProcessingPipeline::tbb_processing_pipeline(
+TbbProcessingPipeline::TbbProcessingPipeline(
     const Config& config,
     std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager
 ) : m_pipeline_config(config), m_memory_manager(std::move(memory_manager)) {
@@ -158,9 +159,6 @@ auto TbbProcessingPipeline::run() -> ProcessingStatistics {
                             }
                         }
                         
-                        if (m_pipeline_config.batch_size > std::numeric_limits<int>::max()) {
-                            throw fq::exception("Batch size exceeds the maximum value for an integer.");
-                        }
                         if (m_pipeline_config.batch_size > std::numeric_limits<int>::max()) {
                             throw fq::exception("Batch size exceeds the maximum value for an integer.");
                         }
@@ -420,7 +418,9 @@ void TbbProcessingPipeline::finalize_stats() {
     
     // 获取峰值内存使用
     if (m_memory_manager) {
-        m_stats.peak_memory_mb = m_memory_manager->get_memory_usage();
+        // 将字节转换为 MB（向下取整）
+        constexpr size_t BYTES_PER_MB_SZ = 1024 * 1024;
+        m_stats.peak_memory_mb = m_memory_manager->get_memory_usage() / BYTES_PER_MB_SZ;
     }
 }
 
@@ -432,7 +432,7 @@ auto create_tbb_pipeline(
     const TbbProcessingPipeline::Config& config,
     std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager
 ) -> std::unique_ptr<IProcessingPipeline> {
-    return std::make_unique<tbb_processing_pipeline>(config, memory_manager);
+    return std::make_unique<TbbProcessingPipeline>(config, memory_manager);
 }
 
 } // namespace fq::processing

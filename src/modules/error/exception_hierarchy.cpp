@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <system_error>
 #include <cstring>
+#include <iomanip>
+#include <ctime>
 
 namespace fq::error {
 
@@ -37,9 +39,9 @@ FastQException::FastQException(const std::string& message,
     // 添加基本上下文信息
     m_context.add("error_code", static_cast<int>(code));
     m_context.add("severity", static_cast<int>(severity));
-    m_context.add("timestamp", std::chrono::system_clock::to_time_t(m_timestamp));
+    m_context.add_time("timestamp", std::chrono::system_clock::to_time_t(m_timestamp));
     m_context.add("file", m_location.file_name());
-    m_context.add("line", m_location.line());
+    m_context.add_line("line", m_location.line());
     m_context.add("function", m_location.function_name());
 }
 
@@ -59,9 +61,9 @@ FastQException::FastQException(const std::string& message,
     // 添加基本上下文信息
     m_context.add("error_code", static_cast<int>(code));
     m_context.add("severity", static_cast<int>(severity));
-    m_context.add("timestamp", std::chrono::system_clock::to_time_t(m_timestamp));
+    m_context.add_time("timestamp", std::chrono::system_clock::to_time_t(m_timestamp));
     m_context.add("file", m_location.file_name());
-    m_context.add("line", m_location.line());
+    m_context.add_line("line", m_location.line());
     m_context.add("function", m_location.function_name());
 }
 

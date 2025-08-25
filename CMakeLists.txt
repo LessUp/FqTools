@@ -51,11 +51,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     else()
         # Release build optimizations
         add_compile_options(-O3 -march=native)
-        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            add_compile_options(-fno-fat-lto-objects)
-        else()
-            add_compile_options(-flto=thin)
-        endif()
     endif()
 endif()
 

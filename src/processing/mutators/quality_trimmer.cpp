@@ -5,10 +5,10 @@
 
 namespace fq::processing {
 
-// quality_trimmer 实现
-quality_trimmer::quality_trimmer(double quality_threshold, 
+// QualityTrimmer 实现
+QualityTrimmer::QualityTrimmer(double quality_threshold, 
                                size_t min_length,
-                               TrimMode mode,
+                               QualityTrimmer::TrimMode mode,
                                int quality_encoding)
     : m_quality_threshold(quality_threshold)
     , m_min_length(min_length)
@@ -23,11 +23,11 @@ quality_trimmer::quality_trimmer(double quality_threshold,
         throw std::invalid_argument("质量编码必须是33（Sanger）或64（Illumina 1.3+）");
     }
     
-    spdlog::debug("quality_trimmer: 创建，质量阈值={}, 最小长度={}, 模式={}", 
+    spdlog::debug("QualityTrimmer: 创建，质量阈值={}, 最小长度={}, 模式={}", 
                  quality_threshold, min_length, static_cast<int>(mode));
 }
 
-auto quality_trimmer::process(fq::fastq::FqInfo& read) -> bool {
+auto QualityTrimmer::process(fq::fastq::FqInfo& read) -> bool {
     m_total_processed.fetch_add(1, std::memory_order_relaxed);
     
     if (read.base.empty() || read.qual.empty()) {
@@ -35,7 +35,7 @@ auto quality_trimmer::process(fq::fastq::FqInfo& read) -> bool {
     }
     
     if (read.base.length() != read.qual.length()) {
-        spdlog::warn("quality_trimmer: 序列和质量长度不匹配");
+        spdlog::warn("QualityTrimmer: 序列和质量长度不匹配");
         return false;
     }
     
@@ -73,11 +73,11 @@ auto quality_trimmer::process(fq::fastq::FqInfo& read) -> bool {
     return true;
 }
 
-auto quality_trimmer::getName() const -> std::string {
+auto QualityTrimmer::getName() const -> std::string {
     return "质量修剪器";
 }
 
-auto quality_trimmer::getDescription() const -> std::string {
+auto QualityTrimmer::getDescription() const -> std::string {
     std::ostringstream oss;
     oss << "修剪质量低于 " << m_quality_threshold << " 的碱基";
     
@@ -96,13 +96,13 @@ auto quality_trimmer::getDescription() const -> std::string {
     return oss.str();
 }
 
-void quality_trimmer::reset() {
+void QualityTrimmer::reset() {
     m_total_processed.store(0, std::memory_order_relaxed);
     m_trimmed_count.store(0, std::memory_order_relaxed);
     m_total_bases_removed.store(0, std::memory_order_relaxed);
 }
 
-auto quality_trimmer::trimFivePrime(const std::string& /*sequence*/, const std::string& quality) const -> size_t {
+auto QualityTrimmer::trimFivePrime(const std::string& /*sequence*/, const std::string& quality) const -> size_t {
     for (size_t i = 0; i < quality.length(); ++i) {
         if (isHighQuality(quality[i])) {
             return i;
@@ -111,7 +111,7 @@ auto quality_trimmer::trimFivePrime(const std::string& /*sequence*/, const std::
     return quality.length(); // 全部都是低质量
 }
 
-auto quality_trimmer::trimThreePrime(const std::string& /*sequence*/, const std::string& quality) const -> size_t {
+auto QualityTrimmer::trimThreePrime(const std::string& /*sequence*/, const std::string& quality) const -> size_t {
     for (size_t i = quality.length(); i > 0; --i) {
         if (isHighQuality(quality[i - 1])) {
             return i;
@@ -120,7 +120,7 @@ auto quality_trimmer::trimThreePrime(const std::string& /*sequence*/, const std:
     return 0; // 全部都是低质量
 }
 
-auto quality_trimmer::isHighQuality(char quality_char) const -> bool {
+auto QualityTrimmer::isHighQuality(char quality_char) const -> bool {
     double quality_score = static_cast<double>(static_cast<unsigned char>(quality_char) - m_quality_encoding);
     return quality_score >= m_quality_threshold;
 }

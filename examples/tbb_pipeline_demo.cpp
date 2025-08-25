@@ -1,5 +1,6 @@
-#include "interfaces/IProcessingPipeline.h"
-#include "Core/Core.h"
+#include "interfaces/i_processing_pipeline.h"
+#include "processing/tbb_processing_pipeline.h"
+#include "core_legacy/core.h"
 #include <iostream>
 #include <chrono>
 
@@ -18,7 +19,7 @@ int main() {
         config.enable_statistics = true;
         config.memory_pool_size = 50;
         
-        auto pipeline = create_tbb_processing_pipeline(config);
+        auto pipeline = create_tbb_pipeline(config);
         
         // 设置输入输出文件
         pipeline->setInput("input.fastq.gz");

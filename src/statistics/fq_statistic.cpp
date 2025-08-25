@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2025 FastQTools
  */
 
-#include "statistics/FqStatistic.h"
+#include "statistics/fq_statistic.h"
 
-#include "statistics/FqStatistic_worker.h"
+#include "statistics/fq_statistic_worker.h"
 
 namespace fq::statistic {
 
@@ -116,7 +116,7 @@ void FqStatistic::run() {
                 [this](std::shared_ptr<fq::fastq::FqInfoBatch> batch) -> FqStatisticResult {
                     if (!batch)
                         return FqStatisticResult();
-                    FqStatistic_worker worker(m_fq_infer);
+                    FqStatisticWorker worker(m_fq_infer);
                     return worker.stat(*batch);
                 }) &
             // Stage 3: Aggregation Filter (Serial)
