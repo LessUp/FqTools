@@ -101,6 +101,8 @@ void FqInfoBatchPool::expand(size_t count) {
     for (size_t i = 0; i < can_add; ++i) {
         m_pool.push(create_object());
     }
+    // 统计预扩容的分配次数
+    m_total_allocated += can_add;
 }
 
 void FqInfoBatchPool::preallocate(size_t count) {
@@ -179,8 +181,8 @@ auto BatchMemoryManager::get_memory_usage() const noexcept -> size_t {
     
     // 估算每个FqInfoBatch的平均内存使用
     constexpr size_t estimated_batch_size = 1024 * 1024; // 1MB per batch
-    
-    return (pool_size + active_count) * estimated_batch_size / (1024 * 1024); // MB
+    // 按字节返回（与头文件说明一致）
+    return (pool_size + active_count) * estimated_batch_size; // bytes
 }
 
 auto BatchMemoryManager::get_active_objects() const noexcept -> size_t {
@@ -230,6 +232,8 @@ void BatchMemoryManager::shrink_worker() {
 
 void BatchMemoryManager::start_shrink_thread() {
     if (!m_shrink_thread.joinable()) {
+        // 确保标志位复位，以便线程可被正确重启
+        m_stop_shrinking = false;
         m_shrink_thread = std::thread(&BatchMemoryManager::shrink_worker, this);
     }
 }
