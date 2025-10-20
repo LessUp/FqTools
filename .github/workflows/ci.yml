@@ -18,15 +18,30 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Cache Conan
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-conan-${{ hashFiles('config/dependencies/**') }}
+          restore-keys: ${{ runner.os }}-conan-
+
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ccache
+          key: ${{ runner.os }}-ccache-lint-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-ccache-
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      # cache configured above
 
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential wget clang-19 clang-tidy-19 clang-format-19 ninja-build
+          sudo apt-get install -y build-essential wget clang-19 clang-tidy-19 clang-format-19 ninja-build ccache
           sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
           sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
           sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-19 100
@@ -85,12 +100,24 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
+      - name: Cache Conan
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-conan-${{ hashFiles('config/dependencies/**') }}
+          restore-keys: ${{ runner.os }}-conan-
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.compiler.name }}-${{ matrix.build_type }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-ccache-
+      
       - name: Install dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential wget ninja-build
+          sudo apt-get install -y build-essential wget ninja-build ccache
 
       - name: Install Clang/LLVM
         if: matrix.compiler.name == 'clang'
@@ -132,7 +159,8 @@ jobs:
           cmake -B build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }} -S . \
             -G "Ninja" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DCMAKE_TOOLCHAIN_FILE=build/conan-${{ matrix.build_type,, }}/conan_toolchain.cmake
+            -DCMAKE_TOOLCHAIN_FILE=build/conan-${{ matrix.build_type,, }}/conan_toolchain.cmake \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build Project
         run: |
@@ -176,3 +204,50 @@ jobs:
       - name: Test development Docker image
         run: |
           docker run --rm fastqtools:dev --help
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Cache Conan
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-conan-${{ hashFiles('config/dependencies/**') }}
+          restore-keys: ${{ runner.os }}-conan-
+
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ccache
+          key: ${{ runner.os }}-ccache-coverage-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-ccache-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov ninja-build ccache
+
+      - name: Set up Python for Conan
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Conan
+        run: |
+          pip install conan==${{ env.CONAN_VERSION }}
+          conan profile detect --force
+
+      - name: Run coverage
+        run: |
+          ./scripts/coverage.sh clang
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: build-clang-coverage/coverage/coverage-filtered.info
+          retention-days: 7

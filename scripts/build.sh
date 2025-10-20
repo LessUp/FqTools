@@ -207,6 +207,11 @@ CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE="${BUILD_TYPE}")
 CMAKE_OPTIONS+=(-DCMAKE_TOOLCHAIN_FILE="${CONAN_DIR}/conan_toolchain.cmake")
 CMAKE_OPTIONS+=(-G "Ninja")
 
+# Use ccache if available
+if command -v ccache &> /dev/null; then
+    CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
+fi
+
 # Add sanitizer options
 if [[ "$ASAN" == true ]]; then
     CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="-fsanitize=address -g")

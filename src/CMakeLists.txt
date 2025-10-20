@@ -27,12 +27,7 @@ add_library(fq_legacy_lib STATIC
 target_include_directories(fq_legacy_lib 
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        /home/shane/.conan2/p/b/spdlo06316ea1c0f3e/p/include
-        /home/shane/.conan2/p/b/fmtd0e4a7e6b2b5b/p/include
-        /home/shane/.conan2/p/b/onetb230850feb9704/p/include
-        /home/shane/.conan2/p/cxxop824b9f422471c/p/include
-    PRIVATE
-        # The hardcoded paths will be removed once all dependencies are handled by modern CMake targets
+        ${CMAKE_SOURCE_DIR}/third_party/gzstream/include
 )
 
 target_compile_definitions(fq_legacy_lib PUBLIC SPDLOG_FMT_EXTERNAL)

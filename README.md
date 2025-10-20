@@ -10,41 +10,33 @@ FastQTools is a high-performance toolkit designed for processing FASTQ files, wh
 
 ```
 fastqtools/
-├── app/                    # Main application and command implementations
-├── cmake/                  # CMake modules and configuration
-├── config/                 # Project configuration files
-│   ├── cmake/             # CMake configurations
-│   ├── dependencies/      # Dependency management files
-│   └── deployment/        # Deployment configurations
-├── docs/                   # Documentation
-│   ├── design/            # Design documents
-│   ├── dev/               # Developer documentation
-│   ├── user/              # User documentation
-│   └── references/        # External references
-├── examples/               # Usage examples
-├── scripts/                # Development and build scripts
-├── src/                    # All source code
+├── cmake/                       # CMake modules and *.in templates
+├── config/
+│   ├── dependencies/            # Dependency managers (Conan/vcpkg) metadata
+│   └── deployment/              # Docker, packaging configs
+├── docs/
+│   ├── user/                    # User docs
+│   ├── dev/                     # Developer docs
+│   └── internal/                # Internal notes/reports (not user-facing)
+├── examples/                    # Usage examples
+├── scripts/                     # Build, test, lint, coverage, generators/validators
+├── src/
 │   ├── CMakeLists.txt
-│   ├── core/              # Core functionality
-│   │   ├── common/        # Common utilities and base classes
-│   │   └── fastq/         # FastQ file handling
-│   ├── analysis/          # Analysis modules
-│   │   ├── stats/         # Statistical analysis
-│   │   └── processing/    # Data processing pipelines
-│   ├── compression/       # Compression and encoding
-│   │   └── encoder/       # Encoding functionality
-│   └── cli/               # Command-line interface
-│       └── commands/      # Command implementations
-├── tests/                  # Unit and integration tests
-└── tools/                  # Development tools
-    ├── benchmark/         # Performance benchmarking tools
-    ├── build/              # Build-related tools
-    ├── development/       # Development tools
-    │   ├── generators/    # Code generation tools
-    │   ├── validators/    # Code quality tools
-    │   └── profiling/     # Performance profiling tools
-    ├── ci/                 # Continuous integration tools
-    └── deploy/             # Deployment tools
+│   ├── cli/                     # CLI entry and commands
+│   ├── modules/                 # C++20 modules (common/error/config/core/io/fastq/...)
+│   ├── core_legacy/             # Transitional legacy code
+│   ├── interfaces/              # Interfaces
+│   ├── processing/              # Pipelines & operators
+│   ├── statistics/              # Stats components
+│   └── memory/                  # Memory helpers
+├── tests/                       # Unit tests
+├── third_party/                 # Vendored third-party headers (with license notes)
+│   └── gzstream/include/gzstream.h
+├── tools/
+│   └── benchmark/               # Performance benchmarks
+├── dist/                        # Packaging recipes (conda, homebrew)
+├── docker/                      # Dockerfiles
+└── .github/workflows/ci.yml     # CI pipeline (build/lint/test/coverage)
 ```
 
 ## 🚀 Getting Started
@@ -59,19 +51,26 @@ fastqtools/
 ### Building
 
 ```bash
-# Using the build script (recommended)
-./scripts/build.sh -p release
+# Using the unified build script (recommended)
+#   Usage: ./scripts/build.sh [COMPILER] [BUILD_TYPE] [OPTIONS]
+#   Examples:
+#     ./scripts/build.sh clang Release
+#     ./scripts/build.sh gcc Debug --asan
+./scripts/build.sh clang Release
 
-# Or manually with CMake
-mkdir build && cd build
-cmake .. --preset release --config-dir ../config/build
-cmake --build . --preset release
+# Or manually with CMake + Conan toolchain
+conan install config/dependencies/ --output-folder=build/conan-release --build=missing -s build_type=Release
+cmake -S . -B build-clang-release \
+  -G "Ninja" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_TOOLCHAIN_FILE=build/conan-release/conan_toolchain.cmake
+cmake --build build-clang-release
 ```
 
 ### Running
 
 ```bash
-./build/release/app/FastQTools --help
+./build-clang-release/FastQTools --help
 ```
 
 ## 📖 Documentation

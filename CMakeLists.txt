@@ -59,10 +59,11 @@ endif()
 # and the conan_toolchain.cmake file is in the build directory.
 if(EXISTS "${CMAKE_BINARY_DIR}/conan_toolchain.cmake")
     include("${CMAKE_BINARY_DIR}/conan_toolchain.cmake")
-elseif(EXISTS "${CMAKE_SOURCE_DIR}/config/dependencies/conan_toolchain.cmake")
-    include("${CMAKE_SOURCE_DIR}/config/dependencies/conan_toolchain.cmake")
+elseif(DEFINED ENV{VCPKG_ROOT} AND EXISTS "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    message(STATUS "Using vcpkg toolchain from $ENV{VCPKG_ROOT}")
+    include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 else()
-    message(FATAL_ERROR "Conan toolchain not found. Please run 'conan install config/dependencies/ --build=missing' in your build directory.")
+    message(STATUS "No Conan or vcpkg toolchain detected; attempting to use system packages.")
 endif()
 
 # --- Find Dependencies (handled by Conan) ---
