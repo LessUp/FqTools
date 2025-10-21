@@ -82,11 +82,11 @@ namespace fq::cli {
  * @param commands 命令名称与命令对象的映射表
  */
 void print_global_help(const std::map<std::string, CommandPtr>& commands) {
-    std::cout << "Usage: fastqtools <command> [options]\n\n";
+    std::cout << "Usage: FastQTools <command> [options]\n\n";
     std::cout << "Available commands:\n";
     for (const auto& [name, command] : commands) {
         std::cout << "  " << name << "\t\t" << command->getDescription() << "\n";
     }
-    std::cout << "\nRun 'fastqtools <command> --help' for more information on a specific command.\n";
+    std::cout << "\nRun 'FastQTools <command> --help' for more information on a specific command.\n";
 }
 }

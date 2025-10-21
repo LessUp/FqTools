@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# FastQTools 测试运行脚本
-# 提供便捷的测试执行和管理功能
+# FastQTools 测试运行脚本（与 scripts/build.sh 保持一致）
+# 使用 ctest --test-dir 在统一的构建目录中运行测试
 
 set -e
 
@@ -13,11 +13,12 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # 默认值
-PRESET="debug"
+COMPILER="clang"         # gcc | clang
+BUILD_TYPE="Debug"       # Debug | Release | RelWithDebInfo | Coverage
 VERBOSE=false
 COVERAGE=false
 FILTER=""
-PARALLEL=true
+CTEST_JOBS=""            # 例如 -j 8
 REPEAT=1
 
 print_usage() {
@@ -26,34 +27,39 @@ print_usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  -p, --preset PRESET    CMake preset to use (default: debug)"
+    echo "  -c, --compiler NAME    Compiler: gcc | clang (default: clang)"
+    echo "  -t, --type TYPE       Build type: Debug|Release|RelWithDebInfo|Coverage (default: Debug)"
     echo "  -v, --verbose          Enable verbose output"
-    echo "  -c, --coverage         Generate coverage report"
+    echo "  -C, --coverage         Generate coverage report"
     echo "  -f, --filter PATTERN   Run only tests matching pattern"
-    echo "  -j, --parallel         Run tests in parallel (default: true)"
+    echo "  -j, --jobs N          Run tests with N parallel jobs (ctest -j N)"
     echo "  -r, --repeat COUNT     Repeat tests COUNT times (default: 1)"
     echo "  -h, --help             Show this help message"
     echo ""
     echo "Examples:"
-    echo "  $0                     # Run all tests with debug preset"
-    echo "  $0 -p release          # Run tests with release preset"
+    echo "  $0                     # Run all tests with clang Debug"
+    echo "  $0 -c gcc -t Release   # Run tests with gcc Release"
     echo "  $0 -f \"*timer*\"        # Run only timer-related tests"
-    echo "  $0 -c                  # Run tests and generate coverage"
+    echo "  $0 -C                  # Run tests and generate coverage"
     echo "  $0 -r 5                # Run tests 5 times"
 }
 
 # 解析命令行参数
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -p|--preset)
-            PRESET="$2"
+        -c|--compiler)
+            COMPILER="$2"
+            shift 2
+            ;;
+        -t|--type)
+            BUILD_TYPE="$2"
             shift 2
             ;;
         -v|--verbose)
             VERBOSE=true
             shift
             ;;
-        -c|--coverage)
+        -C|--coverage)
             COVERAGE=true
             shift
             ;;
@@ -61,9 +67,9 @@ while [[ $# -gt 0 ]]; do
             FILTER="$2"
             shift 2
             ;;
-        -j|--parallel)
-            PARALLEL=true
-            shift
+        -j|--jobs)
+            CTEST_JOBS="-j $2"
+            shift 2
             ;;
         -r|--repeat)
             REPEAT="$2"
@@ -85,15 +91,20 @@ echo -e "${BLUE}FastQTools Test Runner${NC}"
 echo -e "${BLUE}=====================${NC}"
 echo ""
 
-# 检查构建目录是否存在
-BUILD_DIR="build/$PRESET"
+# 计算构建目录名称
+BT_LOWER=$(echo "$BUILD_TYPE" | tr '[:upper:]' '[:lower:]')
+BUILD_DIR="build-${COMPILER}-${BT_LOWER}"
+
+# 若不存在则先构建
 if [[ ! -d "$BUILD_DIR" ]]; then
     echo -e "${YELLOW}Build directory not found. Building project first...${NC}"
-    ./scripts/build.sh -p $PRESET
+    if [[ "$COVERAGE" == true || "$BUILD_TYPE" == "Coverage" ]]; then
+        ./scripts/build.sh "$COMPILER" Coverage --coverage
+        BUILD_DIR="build-${COMPILER}-coverage"
+    else
+        ./scripts/build.sh "$COMPILER" "$BUILD_TYPE"
+    fi
 fi
-
-# 进入构建目录
-cd $BUILD_DIR
 
 # 构建测试参数
 TEST_ARGS=""
@@ -105,13 +116,9 @@ if [[ -n "$FILTER" ]]; then
     TEST_ARGS="$TEST_ARGS -R \"$FILTER\""
 fi
 
-if [[ "$PARALLEL" == true ]]; then
-    TEST_ARGS="$TEST_ARGS --parallel"
-fi
-
 # 运行测试
-echo -e "${BLUE}Running tests with preset: $PRESET${NC}"
-echo -e "${BLUE}Test arguments: $TEST_ARGS${NC}"
+echo -e "${BLUE}Running tests in: $BUILD_DIR${NC}"
+echo -e "${BLUE}Test arguments: $TEST_ARGS ${CTEST_JOBS}${NC}"
 echo ""
 
 for ((i=1; i<=REPEAT; i++)); do
@@ -119,7 +126,7 @@ for ((i=1; i<=REPEAT; i++)); do
         echo -e "${BLUE}Test run $i of $REPEAT${NC}"
     fi
     
-    if eval "ctest --preset $PRESET $TEST_ARGS"; then
+    if eval "ctest --test-dir \"$BUILD_DIR\" $CTEST_JOBS $TEST_ARGS"; then
         echo -e "${GREEN}Tests passed!${NC}"
     else
         echo -e "${RED}Tests failed!${NC}"
@@ -138,13 +145,13 @@ if [[ "$COVERAGE" == true ]]; then
     
     if command -v lcov &> /dev/null; then
         # 使用lcov生成覆盖率报告
-        lcov --capture --directory . --output-file coverage.info
+        lcov --capture --directory "$BUILD_DIR" --output-file coverage.info
         lcov --remove coverage.info '/usr/*' --output-file coverage.info
         lcov --list coverage.info
         
         if command -v genhtml &> /dev/null; then
             genhtml coverage.info --output-directory coverage_html
-            echo -e "${GREEN}Coverage report generated in: $BUILD_DIR/coverage_html/index.html${NC}"
+            echo -e "${GREEN}Coverage report generated in: coverage_html/index.html${NC}"
         fi
     else
         echo -e "${YELLOW}lcov not found. Coverage report not generated.${NC}"

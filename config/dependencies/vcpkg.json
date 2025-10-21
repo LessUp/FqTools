@@ -1,11 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "fastqtools",
-  "version-string": "2.0.0",
+  "version-string": "3.1.0",
   "dependencies": [
     "cxxopts",
     "spdlog",
+    "fmt",
+    "nlohmann-json",
     "zlib",
+    "bzip2",
+    "xz",
+    "mimalloc",
+    "onetbb",
     "gtest"
   ]
 }

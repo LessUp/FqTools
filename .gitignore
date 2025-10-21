@@ -47,6 +47,7 @@ coverage/
 conaninfo.txt
 conanbuildinfo.*
 conan.lock
+conan_toolchain.cmake
 
 # 忽略 vcpkg 安装目录
 vcpkg_installed/

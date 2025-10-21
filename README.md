@@ -44,7 +44,7 @@ fastqtools/
 ### Prerequisites
 
 - CMake 3.20 or higher
-- A C++20 compatible compiler (GCC 10+, Clang 10+, or MSVC 2019+)
+- A C++20 compatible compiler (GCC 11+, Clang 12+, or MSVC 2019+)
 - Ninja build system
 - Optional: Conan or vcpkg for dependency management
 
@@ -75,7 +75,7 @@ cmake --build build-clang-release
 
 ## 📖 Documentation
 
-- [User Guide](docs/user/overview.md) - Getting started and usage instructions
+- [User Guide](docs/user/usage.md) - Getting started and usage instructions
 - [Developer Guide](docs/dev/architecture.md) - Architecture and development information
 - [API Documentation](docs/api/) - Detailed API reference
 

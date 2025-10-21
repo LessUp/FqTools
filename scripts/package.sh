@@ -29,7 +29,7 @@ mkdir -p "${PACKAGE_DIR}/docs"
 
 # 3. Copy artifacts into the package directory
 echo ">>> Copying artifacts..."
-cp "build-clang-Release/FastQTools" "${PACKAGE_DIR}/bin/"
+cp "build-clang-release/FastQTools" "${PACKAGE_DIR}/bin/"
 cp "LICENSE" "${PACKAGE_DIR}/"
 cp "README.md" "${PACKAGE_DIR}/"
 cp "CHANGELOG.md" "${PACKAGE_DIR}/"

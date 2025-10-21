@@ -51,12 +51,16 @@ class FastQTools(ConanFile):
         # Generate CMake toolchain file
         tc.generate()
         
-        # Additional CMake configuration for Clang
-        if self.settings.compiler == "clang":
+        # Append Clang-specific flags ONLY when using libc++ to avoid conflicts on libstdc++11
+        try:
+            libcxx = str(self.settings.compiler.libcxx)
+        except Exception:
+            libcxx = ""
+        if str(self.settings.compiler) == "clang" and libcxx == "libc++":
             toolchain_path = os.path.join(self.generators_folder, "conan_toolchain.cmake")
             with open(toolchain_path, "a") as f:
                 f.write("""
-# Fix Clang-specific compiler flags
+# Fix Clang-specific compiler flags when using libc++
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 endif()

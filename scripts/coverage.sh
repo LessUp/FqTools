@@ -55,41 +55,76 @@ fi
 
 echo -e "${GREEN}>>> Building project with coverage instrumentation...${NC}"
 
-# Build project with coverage
-if ! ./scripts/build.sh "${COMPILER}" Debug --coverage; then
+# Build project with coverage (unified with build.sh directory naming)
+if ! ./scripts/build.sh "${COMPILER}" Coverage --coverage; then
     echo -e "${RED}Error: Build failed${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}>>> Running tests...${NC}"
 
-# Run tests
-cd "${BUILD_DIR}"
-if ! ctest --preset debug --output-on-failure; then
+# Run tests in the coverage build directory
+if ! ctest --test-dir "${BUILD_DIR}" --output-on-failure; then
     echo -e "${RED}Error: Tests failed${NC}"
     exit 1
 fi
-
-cd - > /dev/null
 
 echo -e "${GREEN}>>> Generating coverage data...${NC}"
 
 # Create coverage directory
 mkdir -p "${COVERAGE_DIR}"
 
+# Select proper gcov tool (prefer wrapper to support llvm-cov gcov)
+GCOV_TOOL=""
+WRAPPER_TOOL="$(dirname "$0")/gcov-wrapper.sh"
+if [ -x "$WRAPPER_TOOL" ]; then
+    GCOV_TOOL="$WRAPPER_TOOL"
+else
+    if [[ "${COMPILER}" == "clang" ]]; then
+        if command -v llvm-cov &> /dev/null; then
+            # Create a temporary wrapper to pass subcommand 'gcov'
+            GCOV_TOOL="$(mktemp)" && echo -e "#!/usr/bin/env bash\nexec llvm-cov gcov \"$@\"" > "$GCOV_TOOL" && chmod +x "$GCOV_TOOL"
+        fi
+    else
+        if command -v gcov &> /dev/null; then
+            GCOV_TOOL="$(command -v gcov)"
+        fi
+    fi
+fi
+
 # Capture coverage data
 echo "Capturing coverage data..."
-lcov --capture --directory "${BUILD_DIR}" --output-file "${COVERAGE_DIR}/coverage.info" --rc lcov_branch_coverage=1
+LCOV_CAPTURE_CMD=(lcov --capture \
+    --directory "${BUILD_DIR}" \
+    --output-file "${COVERAGE_DIR}/coverage.info" \
+    --rc lcov_branch_coverage=1 \
+    --rc geninfo_unexecuted_blocks=1 \
+    --ignore-errors mismatch \
+    --ignore-errors version \
+    --ignore-errors inconsistent \
+    --ignore-errors empty)
+
+if [[ -n "${GCOV_TOOL}" ]]; then
+    LCOV_CAPTURE_CMD+=(--gcov-tool "${GCOV_TOOL}")
+fi
+
+"${LCOV_CAPTURE_CMD[@]}"
 
 # Remove system headers and test files from coverage
 echo "Filtering coverage data..."
 lcov --remove "${COVERAGE_DIR}/coverage.info" \
     '/usr/*' \
+    '*/miniconda3/*' \
+    '*/.conan2/*' \
     '*/tests/*' \
     '*/test_*' \
     '*/build-*/*' \
     --output-file "${COVERAGE_DIR}/coverage-filtered.info" \
-    --rc lcov_branch_coverage=1
+    --rc lcov_branch_coverage=1 \
+    --ignore-errors empty \
+    --ignore-errors inconsistent \
+    --ignore-errors version \
+    --ignore-errors unused
 
 echo -e "${GREEN}>>> Generating HTML coverage report...${NC}"
 
@@ -98,7 +133,10 @@ genhtml "${COVERAGE_DIR}/coverage-filtered.info" \
     --output-directory "${HTML_DIR}" \
     --branch-coverage \
     --function-coverage \
-    --title "FastQTools Coverage Report"
+    --title "FastQTools Coverage Report" \
+    --ignore-errors empty \
+    --ignore-errors inconsistent \
+    --ignore-errors version
 
 echo -e "${GREEN}>>> Coverage analysis complete!${NC}"
 echo ""
@@ -110,7 +148,8 @@ echo "  Coverage Data: ${COVERAGE_DIR}/coverage-filtered.info"
 if command -v python3 &> /dev/null; then
     echo ""
     echo -e "${BLUE}Coverage Summary:${NC}"
-    python3 << 'EOF'
+    INFO_FILE="${COVERAGE_DIR}/coverage-filtered.info"
+    python3 - "$INFO_FILE" << 'EOF'
 import re
 import sys
 import os
@@ -189,7 +228,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"  Error calculating coverage: {e}")
 EOF
-    "${COVERAGE_DIR}/coverage-filtered.info"
 fi
 
 echo ""

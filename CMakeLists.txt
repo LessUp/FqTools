@@ -93,6 +93,7 @@ endif()
 add_subdirectory(src)
 
 # --- Testing ---
+include(CTest)
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
     find_package(GTest CONFIG REQUIRED)

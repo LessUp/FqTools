@@ -186,6 +186,14 @@ fi
 echo ">>> Configuring project with ${COMPILER} in ${BUILD_TYPE} mode..."
 echo ">>> Build directory: ${BUILD_DIR}"
 
+# Decide effective build type and coverage output directory
+EFFECTIVE_BUILD_TYPE="$BUILD_TYPE"
+if [[ "$COVERAGE" == true ]]; then
+    EFFECTIVE_BUILD_TYPE="Debug"
+    BUILD_DIR="build-${COMPILER}-coverage"
+    LTO=false
+fi
+
 # 5. Clean previous build if exists
 if [ -d "${BUILD_DIR}" ]; then
     echo ">>> Cleaning previous build..."
@@ -195,7 +203,16 @@ fi
 # 6. Run Conan Install
 CONAN_DIR="${BUILD_DIR}/conan"
 echo ">>> Running Conan install..."
-if ! conan install config/dependencies/ --output-folder="${CONAN_DIR}" --build=missing -s build_type=${BUILD_TYPE}; then
+
+# Ensure Conan profile exists and matches current host
+conan profile detect --force >/dev/null 2>&1 || true
+
+if ! conan install config/dependencies/ \
+    --output-folder="${CONAN_DIR}" \
+    --build=missing \
+    -s build_type=${EFFECTIVE_BUILD_TYPE} \
+    -s compiler.cppstd=20 \
+    -s compiler.libcxx=libstdc++11; then
     echo "Error: Conan install failed"
     exit 1
 fi
@@ -203,7 +220,7 @@ fi
 # 7. Build CMake Options
 CMAKE_OPTIONS=()
 CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER="${CXX_COMPILER}")
-CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE="${BUILD_TYPE}")
+CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE="${EFFECTIVE_BUILD_TYPE}")
 CMAKE_OPTIONS+=(-DCMAKE_TOOLCHAIN_FILE="${CONAN_DIR}/conan_toolchain.cmake")
 CMAKE_OPTIONS+=(-G "Ninja")
 
@@ -212,26 +229,36 @@ if command -v ccache &> /dev/null; then
     CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
 fi
 
-# Add sanitizer options
+# Add sanitizer and coverage options using local accumulators
+EXTRA_CXX_FLAGS=""
+EXTRA_LD_FLAGS=""
+
 if [[ "$ASAN" == true ]]; then
-    CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="-fsanitize=address -g")
-    CMAKE_OPTIONS+=(-DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address")
+    EXTRA_CXX_FLAGS+=" -fsanitize=address -g"
+    EXTRA_LD_FLAGS+=" -fsanitize=address"
 fi
 
 if [[ "$USAN" == true ]]; then
-    CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="${CMAKE_OPTIONS[-1]} -fsanitize=undefined")
-    CMAKE_OPTIONS+=(-DCMAKE_EXE_LINKER_FLAGS="${CMAKE_OPTIONS[-1]} -fsanitize=undefined")
+    EXTRA_CXX_FLAGS+=" -fsanitize=undefined"
+    EXTRA_LD_FLAGS+=" -fsanitize=undefined"
 fi
 
 if [[ "$TSAN" == true ]]; then
-    CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="${CMAKE_OPTIONS[-1]} -fsanitize=thread")
-    CMAKE_OPTIONS+=(-DCMAKE_EXE_LINKER_FLAGS="${CMAKE_OPTIONS[-1]} -fsanitize=thread")
+    EXTRA_CXX_FLAGS+=" -fsanitize=thread"
+    EXTRA_LD_FLAGS+=" -fsanitize=thread"
 fi
 
 if [[ "$COVERAGE" == true ]]; then
     CMAKE_OPTIONS+=(-DENABLE_COVERAGE=ON)
-    CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="${CMAKE_OPTIONS[-1]} --coverage")
-    CMAKE_OPTIONS+=(-DCMAKE_EXE_LINKER_FLAGS="${CMAKE_OPTIONS[-1]} --coverage")
+    EXTRA_CXX_FLAGS+=" --coverage"
+    EXTRA_LD_FLAGS+=" --coverage"
+fi
+
+if [[ -n "$EXTRA_CXX_FLAGS" ]]; then
+    CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="${EXTRA_CXX_FLAGS}")
+fi
+if [[ -n "$EXTRA_LD_FLAGS" ]]; then
+    CMAKE_OPTIONS+=(-DCMAKE_EXE_LINKER_FLAGS="${EXTRA_LD_FLAGS}")
 fi
 
 if [[ "$STATIC_ANALYSIS" == true ]]; then

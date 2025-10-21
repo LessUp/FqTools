@@ -139,37 +139,14 @@ jobs:
           pip install conan==${{ env.CONAN_VERSION }}
           conan profile detect --force
 
-      - name: Configure Conan Profile
+      - name: Build via script
         run: |
-          COMPILER_VERSION=$(${{ matrix.compiler.cxx }} -dumpversion | cut -d. -f1)
-          conan profile update settings.compiler=${{ matrix.compiler.name }} default
-          conan profile update settings.compiler.version=${COMPILER_VERSION} default
-          conan profile update settings.compiler.cppstd=20 default
-          conan profile update settings.compiler.libcxx=libstdc++11 default
+          ./scripts/build.sh ${{ matrix.compiler.name }} ${{ matrix.build_type }}
 
-      - name: Run Conan Install
-        run: |
-          conan install config/dependencies/ --output-folder=build/conan-${{ matrix.build_type,, }} --build=missing -s build_type=${{ matrix.build_type }}
-
-      - name: Configure CMake
-        env:
-          CC: ${{ matrix.compiler.cc }}
-          CXX: ${{ matrix.compiler.cxx }}
-        run: |
-          cmake -B build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }} -S . \
-            -G "Ninja" \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DCMAKE_TOOLCHAIN_FILE=build/conan-${{ matrix.build_type,, }}/conan_toolchain.cmake \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-
-      - name: Build Project
-        run: |
-          cmake --build build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }}
-
-      - name: Run Tests
+      - name: Run tests via script
         if: matrix.build_type == 'Release'
-        working-directory: ./build-${{ matrix.compiler.name }}-${{ matrix.build_type,, }}
-        run: ctest --output-on-failure
+        run: |
+          ./scripts/test.sh -c ${{ matrix.compiler.name }} -t ${{ matrix.build_type }} -j 2
 
       - name: Upload build artifacts
         if: matrix.build_type == 'Release'

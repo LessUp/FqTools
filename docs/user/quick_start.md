@@ -21,8 +21,8 @@ FastQTools 是一个现代化的生物信息学命令行工具集，专注于高
 # 基本用法：对单个压缩的 FastQ 文件进行统计
 fastqtools stat --input input.fastq.gz --output output.stat.txt
 
-# 使用8个线程处理双端测序数据
-fastqtools stat --input read1.fq.gz --input2 read2.fq.gz --output paired.stat.txt --threads 8
+# 使用8个线程处理文件
+fastqtools stat --input reads.fq.gz --output analysis.stat.txt --threads 8
 ```
 
 #### 输出指标
@@ -34,14 +34,14 @@ fastqtools stat --input read1.fq.gz --input2 read2.fq.gz --output paired.stat.tx
 
 ## 🛠️ 技术栈
 
-- **语言标准**: C++26
-- **构建系统**: CMake (>= 3.28)
-- **包管理**: Conan (>= 2.19)
+- **语言标准**: C++20
+- **构建系统**: CMake (>= 3.20)
+- **包管理**: Conan 
 - **并行计算**: Intel TBB
 - **命令行解析**: cxxopts
 - **日志**: spdlog
 
 ## 下一步
 
-- 阅读 **[安装指南](./user_installation.md)** 了解如何安装本工具。
-- 阅读 **[使用说明](./user_usage.md)** 了解所有命令和参数的详细信息。
+- 阅读 **[安装指南](../user/installation.md)** 了解如何安装本工具。
+- 阅读 **[使用说明](../user/usage.md)** 了解所有命令和参数的详细信息。
