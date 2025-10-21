@@ -52,4 +52,5 @@ target_include_directories(fq_lib
     INTERFACE
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src/modules/pipeline
 )

@@ -1,5 +1,5 @@
 #include "stat_command.h"
-#include "../../interfaces/i_statistic_calculator.h" // <-- Include the interface, NOT the concrete class
+#include <fqtools/statistic_calculator.h>
 #include <cxxopts.hpp>
 #include <iostream>
 

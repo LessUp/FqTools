@@ -61,3 +61,11 @@
 -   **维持了模块化思想**：通过现代CMake，我们将代码库组织成高内聚、低耦合的静态库目标，在逻辑上实现了模块化。
 
 未来的某一天，当编译器和构建系统对C++模块的支持足够成熟和稳定时，我们可以再次平滑地迁移到模块化。
+
+### 公共 API 头目录
+
+- 对外公共接口统一通过 `include/fqtools/` 暴露：
+  - `fqtools/processing_pipeline.h` 暴露 `IProcessingPipeline` 与工厂方法 `create_processing_pipeline()`。
+  - `fqtools/statistic_calculator.h` 暴露统计接口与 `create_statistic_calculator()`。
+- 代码内部实现（如 `processing/`、`statistics/` 等）不建议在 CLI 或外部组件直接包含，避免越层依赖。
+- 聚合头 `include/fqtools/fq.h` 可用于通用场景（CLI 与二次开发可直接引用）。

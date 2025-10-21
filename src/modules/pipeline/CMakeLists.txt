@@ -1,18 +1,19 @@
 add_library(fq_pipeline STATIC
-    ../../interfaces/factory.cpp
-    ../../processing/processing_pipeline.cpp
-    ../../processing/tbb_processing_pipeline.cpp
-    ../../processing/i_read_processor.cpp
-    ../../processing/mutators/quality_trimmer.cpp
-    ../../processing/predicates/min_quality_predicate.cpp
-    ../../memory/batch_memory_manager.cpp
-    ../../statistics/fq_statistic.cpp
-    ../../statistics/fq_statistic_worker.cpp
+    factory.cpp
+    processing/processing_pipeline.cpp
+    processing/tbb_processing_pipeline.cpp
+    processing/i_read_processor.cpp
+    processing/mutators/quality_trimmer.cpp
+    processing/predicates/min_quality_predicate.cpp
+    memory/batch_memory_manager.cpp
+    statistics/fq_statistic.cpp
+    statistics/fq_statistic_worker.cpp
 )
 
 target_include_directories(fq_pipeline
     PUBLIC
         ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/third_party/gzstream/include
 )
 

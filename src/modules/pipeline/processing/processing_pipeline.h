@@ -13,7 +13,7 @@
  * @license MIT License
  */
 
-#include "../interfaces/i_processing_pipeline.h" // Include the new interface
+#include "interfaces/i_processing_pipeline.h" // Include the new interface
 #include <vector>
 #include <memory>
 #include <atomic>

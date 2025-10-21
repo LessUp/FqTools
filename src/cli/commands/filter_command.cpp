@@ -7,7 +7,7 @@
 #include "processing/predicates/min_quality_predicate.h"
 #include "processing/processing_pipeline.h"  // Add full definition for ProcessingStatistics
 #include <cxxopts.hpp>
-#include "interfaces/i_processing_pipeline.h"  // <-- Include the interface
+#include <fqtools/processing_pipeline.h>  // public API for interface
 
 namespace fq::app {
 

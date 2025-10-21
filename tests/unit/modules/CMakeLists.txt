@@ -31,6 +31,11 @@ add_module_test(test_common_module_new common
     common/test_common.cpp
 )
 
+# Pipeline 模块Smoke测试
+add_module_test(test_pipeline_smoke pipeline
+    pipeline/test_pipeline_smoke.cpp
+)
+
 # Error模块测试 (暂时注释掉，等待实现)
 # add_module_test(test_error_system error
 #     error/test_exceptions.cpp
@@ -66,6 +71,7 @@ add_module_test(test_common_module_new common
 add_custom_target(module_tests
     DEPENDS 
         test_common_module_new
+        test_pipeline_smoke
         # test_error_system
         # test_config_system
         # test_core_types

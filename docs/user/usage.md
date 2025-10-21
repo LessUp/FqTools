@@ -123,3 +123,11 @@ FastQTools filter \
 
 - `--version`
   显示 `FastQTools` 的版本信息。
+
+## 公共 API 头引用
+
+- 推荐在应用层仅包含公共头：
+  - `#include <fqtools/processing_pipeline.h>` 提供 `IProcessingPipeline` 与 `create_processing_pipeline()`。
+  - `#include <fqtools/statistic_calculator.h>` 提供统计接口与 `create_statistic_calculator()`。
+  - 或使用聚合头：`#include <fqtools/fq.h>`。
+- 说明：当前 `ProcessingStatistics::toString()` 由实现头 `processing/processing_pipeline.h` 提供。如需打印详细统计信息，可临时包含该实现头，后续版本将把字符串化能力提升到公共 API。

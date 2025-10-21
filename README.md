@@ -16,8 +16,9 @@ fastqtools/
 │   └── deployment/              # Docker, packaging configs
 ├── docs/
 │   ├── user/                    # User docs
-│   ├── dev/                     # Developer docs
-│   └── internal/                # Internal notes/reports (not user-facing)
+│   ├── design/                  # High-level architecture & design
+│   ├── development/             # Build, standards, contributing, guidelines
+│   └── _archive/                # Historical/internal materials
 ├── examples/                    # Usage examples
 ├── scripts/                     # Build, test, lint, coverage, generators/validators
 ├── src/
@@ -76,7 +77,7 @@ cmake --build build-clang-release
 ## 📖 Documentation
 
 - [User Guide](docs/user/usage.md) - Getting started and usage instructions
-- [Developer Guide](docs/dev/architecture.md) - Architecture and development information
+- [Developer Guide](docs/design/architecture.md) - Architecture and development information
 - [API Documentation](docs/api/) - Detailed API reference
 
 ## 🧪 Testing

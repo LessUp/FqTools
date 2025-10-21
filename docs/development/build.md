@@ -43,5 +43,5 @@ rm -rf build-*
 
 ## 参考
 
-- 开发指南：`docs/dev/coding_standards.md`
-- 架构说明：`docs/dev/architecture.md`
+- 开发指南：`docs/development/coding_standards.md`
+- 架构说明：`docs/design/architecture.md`
