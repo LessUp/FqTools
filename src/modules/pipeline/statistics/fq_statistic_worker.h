@@ -19,7 +19,7 @@
 #include <memory>
 
 #include "core_legacy/core.h"
-#include "i_statistic.h"
+#include "fqtools/statistics/statistic_interface.h"
 
 namespace fq::statistic {
 

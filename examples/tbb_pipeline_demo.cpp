@@ -1,4 +1,4 @@
-#include "interfaces/i_processing_pipeline.h"
+#include <fqtools/processing_pipeline.h>
 #include "processing/tbb_processing_pipeline.h"
 #include "core_legacy/core.h"
 #include <iostream>

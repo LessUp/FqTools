@@ -84,7 +84,7 @@ void TbbProcessingPipeline::setConfig(const ProcessingConfig& config) {
  * @brief 添加数据修改器
  * @param mutator 读数据修改器
  */
-void TbbProcessingPipeline::addMutator(std::unique_ptr<IReadMutator> mutator) {
+void TbbProcessingPipeline::addMutator(std::unique_ptr<ReadMutatorInterface> mutator) {
     m_mutators.push_back(std::move(mutator));
 }
 
@@ -92,7 +92,7 @@ void TbbProcessingPipeline::addMutator(std::unique_ptr<IReadMutator> mutator) {
  * @brief 添加数据过滤器
  * @param predicate 读数据过滤器
  */
-void TbbProcessingPipeline::addPredicate(std::unique_ptr<IReadPredicate> predicate) {
+void TbbProcessingPipeline::addPredicate(std::unique_ptr<ReadPredicateInterface> predicate) {
     m_predicates.push_back(std::move(predicate));
 }
 
@@ -431,7 +431,7 @@ void TbbProcessingPipeline::finalize_stats() {
 auto create_tbb_pipeline(
     const TbbProcessingPipeline::Config& config,
     std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager
-) -> std::unique_ptr<IProcessingPipeline> {
+) -> std::unique_ptr<ProcessingPipelineInterface> {
     return std::make_unique<TbbProcessingPipeline>(config, memory_manager);
 }
 

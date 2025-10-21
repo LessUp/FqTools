@@ -61,11 +61,11 @@ static auto calErrPerPos(const std::vector<uint64_t>& n_pos_qual, uint64_t n_rea
 }
 
 /**
- * @brief FqStatistic 构造函数
+ * @brief FastqStatisticCalculator 构造函数
  * @details 初始化统计参数和输入文件推断对象
  * @param options 统计选项
  */
-FqStatistic::FqStatistic(const StatisticOptions& options) : m_options(options) {
+FastqStatisticCalculator::FastqStatisticCalculator(const StatisticOptions& options) : m_options(options) {
     m_fq_infer = std::make_shared<fq::fastq::FastQInfer>(m_options.input_fastq);
 }
 
@@ -73,7 +73,7 @@ FqStatistic::FqStatistic(const StatisticOptions& options) : m_options(options) {
  * @brief 执行 FASTQ 统计主流程（TBB 并行）
  * @details 包括输入校验、并行流水线构建及最终结果聚合
  */
-void FqStatistic::run() {
+void FastqStatisticCalculator::run() {
     spdlog::info("Starting FASTQ statistics generation for '{}' using TBB pipeline.", m_options.input_fastq);
 
     const auto& attrib = m_fq_infer->getFqFileAttribution();
@@ -131,7 +131,7 @@ void FqStatistic::run() {
     spdlog::info("Statistics report saved to '{}'", m_options.output_stat);
 }
 
-void FqStatistic::writeResult(const FqStatisticResult& result) {
+void FastqStatisticCalculator::writeResult(const FqStatisticResult& result) {
     std::ofstream writer(m_options.output_stat);
     if (!writer) {
         throw fq::exception("Failed to open output statistics file: " + m_options.output_stat);

@@ -19,7 +19,7 @@ struct FilterCommand::Config {
 
 // Use the factory in the constructor
 FilterCommand::FilterCommand()
-    : m_config(std::make_unique<Config>()), m_pipeline(fq::processing::create_processing_pipeline()) {}
+    : m_config(std::make_unique<Config>()), m_pipeline(fq::processing::make_processing_pipeline()) {}
 
 FilterCommand::~FilterCommand() = default;
 

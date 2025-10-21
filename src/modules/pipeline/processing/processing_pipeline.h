@@ -13,7 +13,7 @@
  * @license MIT License
  */
 
-#include "interfaces/i_processing_pipeline.h" // Include the new interface
+#include "fqtools/pipeline/processing_pipeline_interface.h"
 #include <vector>
 #include <memory>
 #include <atomic>
@@ -26,8 +26,8 @@ namespace fq::fastq {
 
 namespace fq::processing {
 
-class IReadMutator;
-class IReadPredicate;
+class ReadMutatorInterface;
+class ReadPredicateInterface;
 
 /**
  * @brief 处理统计信息结构体
@@ -82,20 +82,20 @@ struct ProcessingStatistics {
  * @invariant 配置设置必须在运行前完成
  * @warning 处理大文件时建议使用并行模式以提高性能
  */
-class ProcessingPipeline : public IProcessingPipeline { // Inherit from interface
+class SequentialProcessingPipeline : public ProcessingPipelineInterface {
 public:
     /**
      * @brief 默认构造函数
      * @details 初始化处理管道，设置默认配置
      * @post 管道处于就绪状态，可以接受配置
      */
-    ProcessingPipeline();
+    SequentialProcessingPipeline();
     
     /**
      * @brief 析构函数
      * @details 清理所有资源，确保文件句柄正确关闭
      */
-    ~ProcessingPipeline();
+    ~SequentialProcessingPipeline();
 
     /**
      * @brief 设置输入文件路径
@@ -139,7 +139,7 @@ public:
      * @post 修改器被添加到处理链中
      * @note 修改器按添加顺序依次执行
      */
-    void addMutator(std::unique_ptr<IReadMutator> mutator) override;
+    void addMutator(std::unique_ptr<ReadMutatorInterface> mutator) override;
     
     /**
      * @brief 添加数据过滤器
@@ -150,7 +150,7 @@ public:
      * @post 过滤器被添加到处理链中
      * @note 过滤器按添加顺序依次执行，任一过滤器失败则数据被过滤
      */
-    void addPredicate(std::unique_ptr<IReadPredicate> predicate) override;
+    void addPredicate(std::unique_ptr<ReadPredicateInterface> predicate) override;
     
     /**
      * @brief 执行数据处理
@@ -216,8 +216,8 @@ private:
     std::string m_input_path;                                      ///< 输入文件路径
     std::string m_output_path;                                     ///< 输出文件路径
     ProcessingConfig m_config;                                     ///< 处理配置
-    std::vector<std::unique_ptr<IReadMutator>> m_mutators;         ///< 数据修改器列表
-    std::vector<std::unique_ptr<IReadPredicate>> m_predicates;     ///< 数据过滤器列表
+    std::vector<std::unique_ptr<ReadMutatorInterface>> m_mutators;         ///< 数据修改器列表
+    std::vector<std::unique_ptr<ReadPredicateInterface>> m_predicates;     ///< 数据过滤器列表
 };
 
 }

@@ -1,2 +1,2 @@
 #pragma once
-#include "interfaces/i_processing_pipeline.h"
+#include "fqtools/pipeline/processing_pipeline_interface.h"

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "modules/common/common.h"
-#include "interfaces/i_processing_pipeline.h"
-#include "interfaces/i_statistic_calculator.h"
+#include "fqtools/pipeline/processing_pipeline_interface.h"
+#include "fqtools/statistics/statistic_calculator_interface.h"
 
 namespace fq { namespace common {
 inline void print_big_logo() { print_logo(); }

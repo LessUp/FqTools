@@ -1,6 +1,6 @@
-#include "interfaces/i_statistic_calculator.h"
+#include "fqtools/statistics/statistic_calculator_interface.h"
 #include "statistics/fq_statistic.h"
-#include "interfaces/i_processing_pipeline.h"
+#include "fqtools/pipeline/processing_pipeline_interface.h"
 #include "processing/processing_pipeline.h"
 #include "processing/tbb_processing_pipeline.h"
 
@@ -11,8 +11,13 @@ namespace fq::statistic {
  * This is the only place in the code (outside of the module itself)
  * that knows about the concrete FqStatistic class.
  */
-auto create_statistic_calculator(const StatisticOptions& options) -> std::unique_ptr<IStatisticCalculator> {
-    return std::make_unique<FqStatistic>(options);
+auto make_statistic_calculator(const StatisticOptions& options) -> std::unique_ptr<StatisticCalculatorInterface> {
+    return std::make_unique<FastqStatisticCalculator>(options);
+}
+
+// Backward-compatible wrapper
+auto create_statistic_calculator(const StatisticOptions& options) -> std::unique_ptr<StatisticCalculatorInterface> {
+    return make_statistic_calculator(options);
 }
 
 } // namespace fq::statistic
@@ -22,14 +27,19 @@ namespace fq::processing {
 /**
  * @brief factory function for the processing pipeline.
  */
-auto create_processing_pipeline() -> std::unique_ptr<IProcessingPipeline> {
-    return std::make_unique<ProcessingPipeline>();
+auto make_processing_pipeline() -> std::unique_ptr<ProcessingPipelineInterface> {
+    return std::make_unique<SequentialProcessingPipeline>();
+}
+
+// Backward-compatible wrapper
+auto create_processing_pipeline() -> std::unique_ptr<ProcessingPipelineInterface> {
+    return make_processing_pipeline();
 }
 
 /**
  * @brief factory function for the high-performance TBB processing pipeline.
  */
-auto create_tbb_processing_pipeline() -> std::unique_ptr<IProcessingPipeline> {
+auto create_tbb_processing_pipeline() -> std::unique_ptr<ProcessingPipelineInterface> {
     // Delegate to unified factory with default config and memory manager
     return create_tbb_pipeline();
 }
@@ -37,7 +47,7 @@ auto create_tbb_processing_pipeline() -> std::unique_ptr<IProcessingPipeline> {
 /**
  * @brief factory overload that accepts Config to match example usage.
  */
-auto create_tbb_processing_pipeline(const TbbProcessingPipeline::Config& config) -> std::unique_ptr<IProcessingPipeline> {
+auto create_tbb_processing_pipeline(const TbbProcessingPipeline::Config& config) -> std::unique_ptr<ProcessingPipelineInterface> {
     return create_tbb_pipeline(config);
 }
 

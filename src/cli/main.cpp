@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include <fqtools/fq.h>
+#include <fqtools/app/app_info.h>
 #include "commands/i_command.h"
 #include "commands/stat_command.h"
 #include "commands/filter_command.h"

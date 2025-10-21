@@ -10,15 +10,10 @@
 #pragma once
 
 #include "commands/i_command.h"
-#include "interfaces/i_processing_pipeline.h" // 引入正确的处理管道接口定义
+#include <fqtools/processing_pipeline.h>
 #include <memory>
 #include <vector>
 #include <string>
-
-namespace fq::processing {
-    // 正确的接口前向声明（与头文件一致）
-    class IProcessingPipeline;
-}
 
 namespace fq::app {
 
@@ -69,7 +64,7 @@ private:
     struct Config;
     std::unique_ptr<Config> m_config;
     // Depend on the INTERFACE
-    std::unique_ptr<fq::processing::IProcessingPipeline> m_pipeline;
+    std::unique_ptr<fq::processing::ProcessingPipelineInterface> m_pipeline;
 };
 
 } // namespace fq::app

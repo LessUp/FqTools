@@ -22,7 +22,7 @@ namespace fq::processing
  * - 自动背压控制
  * - 完善的错误处理和恢复机制
  */
-class TbbProcessingPipeline : public IProcessingPipeline
+class TbbProcessingPipeline : public ProcessingPipelineInterface
 {
 public:
     /**
@@ -59,8 +59,8 @@ public:
     void setInput(const std::string &input_path) override;
     void setOutput(const std::string &output_path) override;
     void setConfig(const ProcessingConfig &config) override;
-    void addMutator(std::unique_ptr<IReadMutator> mutator) override;
-    void addPredicate(std::unique_ptr<IReadPredicate> predicate) override;
+    void addMutator(std::unique_ptr<ReadMutatorInterface> mutator) override;
+    void addPredicate(std::unique_ptr<ReadPredicateInterface> predicate) override;
     auto run() -> ProcessingStatistics override;
 
     /**
@@ -146,6 +146,6 @@ private:
  */
 auto create_tbb_pipeline(const TbbProcessingPipeline::Config &config = TbbProcessingPipeline::Config{},
                          std::shared_ptr<fq::memory::BatchMemoryManager> memory_manager = nullptr)
-    -> std::unique_ptr<IProcessingPipeline>;
+    -> std::unique_ptr<ProcessingPipelineInterface>;
 
 } // namespace fq::processing

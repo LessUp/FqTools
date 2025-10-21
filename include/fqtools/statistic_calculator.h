@@ -1,2 +1,2 @@
 #pragma once
-#include "interfaces/i_statistic_calculator.h"
+#include "fqtools/statistics/statistic_calculator_interface.h"

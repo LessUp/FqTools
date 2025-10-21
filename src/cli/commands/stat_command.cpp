@@ -32,7 +32,7 @@ auto StatCommand::execute(int argc, char* argv[]) -> int {
     stat_options.thread_num = result["threads"].as<int>();
 
     // Use the factory to create an instance of the calculator
-    auto stater = fq::statistic::create_statistic_calculator(stat_options);
+    auto stater = fq::statistic::make_statistic_calculator(stat_options);
     
     // Call run via the interface pointer
     stater->run();

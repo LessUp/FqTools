@@ -15,8 +15,8 @@
 #pragma once
 
 #include "core_legacy/core.h"
-#include "i_statistic.h"
-#include "interfaces/i_statistic_calculator.h" // Include the new interface
+#include "fqtools/statistics/statistic_interface.h"
+#include "fqtools/statistics/statistic_calculator_interface.h"
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -55,7 +55,7 @@ struct FqStatisticResult
  * @note 该类利用并行处理提高大文件的处理效率
  * @warning 处理过程中需要足够的内存空间
  */
-class FqStatistic : public IStatisticCalculator
+class FastqStatisticCalculator : public IStatisticCalculator
 {
 public:
     /**
@@ -66,7 +66,7 @@ public:
      * @pre options 必须包含有效的配置参数
      * @post 统计信息管理器被初始化并准备使用
      */
-    explicit FqStatistic(const StatisticOptions &options);
+    explicit FastqStatisticCalculator(const StatisticOptions &options);
 
     /**
      * @brief 执行统计信息生成过程

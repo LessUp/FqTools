@@ -32,11 +32,11 @@ struct FqStatisticResult;
  * @note Users should extend this interface to perform custom statistical
  *       analysis relevant to their use case.
  */
-class IStatistic : public fq::common::WithID {
+class StatisticInterface : public fq::common::WithID {
 public:
     using Batch = fq::fastq::FqInfoBatch;
     using Result = FqStatisticResult;
-    ~IStatistic() override = default;
+    ~StatisticInterface() override = default;
     /**
      * @brief Compute statistics for a given batch of fastq data.
      * @param batch The batch of fastq information to process.
@@ -44,5 +44,7 @@ public:
      */
     virtual auto stat(const Batch& batch) -> Result = 0;
 };
+
+using IStatistic = StatisticInterface;
 
 } // namespace fq::statistic

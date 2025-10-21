@@ -18,14 +18,16 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "fqtools/pipeline/read_mutator_interface.h"
+#include "fqtools/pipeline/read_predicate_interface.h"
 
 namespace fq::processing
 {
 
 // 统计信息和处理器接口的前向声明
 struct ProcessingStatistics;
-class IReadMutator;
-class IReadPredicate;
+using IReadMutator = ReadMutatorInterface;
+using IReadPredicate = ReadPredicateInterface;
 
 /**
  * @brief 处理管道配置结构体
@@ -49,14 +51,14 @@ struct ProcessingConfig
  * @invariant 所有配置必须在调用 run() 之前完成
  * @note 该接口支持多种实现方式，如串行处理、并行处理等
  */
-class IProcessingPipeline
+class ProcessingPipelineInterface
 {
 public:
     /**
      * @brief 虚析构函数
      * @details 确保派生类的正确析构
      */
-    virtual ~IProcessingPipeline() = default;
+    virtual ~ProcessingPipelineInterface() = default;
 
     /**
      * @brief 设置输入文件路径
@@ -100,7 +102,7 @@ public:
      * @post 修改器被注册到处理管道中
      * @note 修改器按添加顺序依次执行
      */
-    virtual void addMutator(std::unique_ptr<IReadMutator> mutator) = 0;
+    virtual void addMutator(std::unique_ptr<ReadMutatorInterface> mutator) = 0;
     
     /**
      * @brief 添加数据过滤器
@@ -111,7 +113,7 @@ public:
      * @post 过滤器被注册到处理管道中
      * @note 过滤器按添加顺序依次执行，任一过滤器失败则数据被过滤
      */
-    virtual void addPredicate(std::unique_ptr<IReadPredicate> predicate) = 0;
+    virtual void addPredicate(std::unique_ptr<ReadPredicateInterface> predicate) = 0;
 
     /**
      * @brief 执行数据处理
@@ -130,10 +132,14 @@ public:
  * @details 创建并返回一个实现了 IProcessingPipeline 接口的对象实例
  *          该函数实现了工厂模式，隐藏了具体的实现类
  * 
- * @return std::unique_ptr<IProcessingPipeline> 指向处理管道实例的唯一指针
+ * @return std::unique_ptr<ProcessingPipelineInterface> 指向处理管道实例的唯一指针
  * @post 返回的处理管道实例已初始化并准备使用
  * @note 调用者负责管理返回的实例生命周期
  */
-auto create_processing_pipeline() -> std::unique_ptr<IProcessingPipeline>;
+auto make_processing_pipeline() -> std::unique_ptr<ProcessingPipelineInterface>;
+
+using IProcessingPipeline = ProcessingPipelineInterface;
+auto create_processing_pipeline() -> std::unique_ptr<ProcessingPipelineInterface>;
 
 } // namespace fq::processing
+

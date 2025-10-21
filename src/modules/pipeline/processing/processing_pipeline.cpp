@@ -9,16 +9,16 @@
 
 namespace fq::processing {
 
-ProcessingPipeline::ProcessingPipeline() = default;
-ProcessingPipeline::~ProcessingPipeline() = default;
+SequentialProcessingPipeline::SequentialProcessingPipeline() = default;
+SequentialProcessingPipeline::~SequentialProcessingPipeline() = default;
 
-void ProcessingPipeline::setInput(const std::string& input_path) { m_input_path = input_path; }
-void ProcessingPipeline::setOutput(const std::string& output_path) { m_output_path = output_path; }
-void ProcessingPipeline::setConfig(const ProcessingConfig& config) { m_config = config; }
-void ProcessingPipeline::addMutator(std::unique_ptr<IReadMutator> mutator) { m_mutators.push_back(std::move(mutator)); }
-void ProcessingPipeline::addPredicate(std::unique_ptr<IReadPredicate> predicate) { m_predicates.push_back(std::move(predicate)); }
+void SequentialProcessingPipeline::setInput(const std::string& input_path) { m_input_path = input_path; }
+void SequentialProcessingPipeline::setOutput(const std::string& output_path) { m_output_path = output_path; }
+void SequentialProcessingPipeline::setConfig(const ProcessingConfig& config) { m_config = config; }
+void SequentialProcessingPipeline::addMutator(std::unique_ptr<ReadMutatorInterface> mutator) { m_mutators.push_back(std::move(mutator)); }
+void SequentialProcessingPipeline::addPredicate(std::unique_ptr<ReadPredicateInterface> predicate) { m_predicates.push_back(std::move(predicate)); }
 
-auto ProcessingPipeline::run() -> ProcessingStatistics {
+auto SequentialProcessingPipeline::run() -> ProcessingStatistics {
     // 如果配置的线程数大于1，使用TBB并行流水线
     if (m_config.thread_count > 1) {
         return processWithTBB();
@@ -27,7 +27,7 @@ auto ProcessingPipeline::run() -> ProcessingStatistics {
     }
 }
 
-auto ProcessingPipeline::processSequential() -> ProcessingStatistics {
+auto SequentialProcessingPipeline::processSequential() -> ProcessingStatistics {
     ProcessingStatistics stats;
     fq::fastq::FastQReader reader(m_input_path);
     fq::fastq::FastQWriter writer(m_output_path);
@@ -43,7 +43,7 @@ auto ProcessingPipeline::processSequential() -> ProcessingStatistics {
     return stats;
 }
 
-auto ProcessingPipeline::processBatch(fq::fastq::FqInfoBatch& batch, ProcessingStatistics& stats) -> bool {
+auto SequentialProcessingPipeline::processBatch(fq::fastq::FqInfoBatch& batch, ProcessingStatistics& stats) -> bool {
     std::vector<fq::fastq::FqInfo> passed_reads;
     passed_reads.reserve(batch.reads.size());
 
@@ -69,7 +69,7 @@ auto ProcessingPipeline::processBatch(fq::fastq::FqInfoBatch& batch, ProcessingS
     return true;
 }
 
-auto ProcessingPipeline::processWithTBB() -> ProcessingStatistics {
+auto SequentialProcessingPipeline::processWithTBB() -> ProcessingStatistics {
     ProcessingStatistics final_stats;
     
     // 性能监控
