@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "core_legacy/core.h"
+#include <fqtools/fq.h>
 #include "commands/i_command.h"
 #include "commands/stat_command.h"
 #include "commands/filter_command.h"

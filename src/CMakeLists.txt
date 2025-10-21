@@ -10,18 +10,6 @@ add_library(fq_legacy_lib STATIC
     core_legacy/core.h
     core_legacy/std.h
     core_legacy/core.cpp
-    interfaces/i_statistic_calculator.h
-    interfaces/i_processing_pipeline.h
-    interfaces/factory.cpp
-    statistics/fq_statistic_worker.cpp
-    statistics/fq_statistic.cpp
-    processing/processing_pipeline.cpp
-    processing/tbb_processing_pipeline.cpp
-    processing/mutators/quality_trimmer.cpp
-    processing/i_read_processor.cpp
-    processing/predicates/min_quality_predicate.cpp
-    memory/batch_memory_manager.h
-    memory/batch_memory_manager.cpp
 )
 
 target_include_directories(fq_legacy_lib 
@@ -50,6 +38,18 @@ add_library(fq_lib INTERFACE)
 target_link_libraries(fq_lib 
     INTERFACE 
         fq_config  # This transitively links fq_error and fq_common
+        fq_common
+        fq_error
+        fq_core
+        fq_io
+        fq_fastq
         fq_legacy_lib
+        fq_pipeline
         fmt::fmt  # Add explicit fmt linking
+)
+
+target_include_directories(fq_lib
+    INTERFACE
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/src
 )

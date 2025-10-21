@@ -21,6 +21,7 @@
 #include "../core/core.h"
 #include "../io/io.h"
 #include "../error/error.h"
+#include "../error/exception_macros.h"
 
 // import fq.core;
 // import fq.io;

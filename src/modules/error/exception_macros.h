@@ -64,8 +64,13 @@
     } while(0)
 
 // 验证异常宏
-#define FQ_THROW_VALIDATION_ERROR(field, value, rule) \
+#define FQ__FQ_VA_SELECT(_1,_2,_3,NAME,...) NAME
+#define FQ_THROW_VALIDATION_ERROR2(field, value) \
+    throw fq::error::ValidationException(field, value, "Validation error")
+#define FQ_THROW_VALIDATION_ERROR3(field, value, rule) \
     throw fq::error::ValidationException(field, value, rule)
+#define FQ_THROW_VALIDATION_ERROR(...) \
+    FQ__FQ_VA_SELECT(__VA_ARGS__, FQ_THROW_VALIDATION_ERROR3, FQ_THROW_VALIDATION_ERROR2)(__VA_ARGS__)
 
 #define FQ_THROW_VALIDATION_ERROR_EXPECTED(field, value, expected, rule) \
     throw fq::error::ValidationException(field, value, expected, rule)
