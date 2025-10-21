@@ -1,8 +1,8 @@
 #include "fqtools/statistics/statistic_calculator_interface.h"
 #include "statistics/fq_statistic.h"
 #include "fqtools/pipeline/processing_pipeline_interface.h"
-#include "processing/processing_pipeline.h"
-#include "processing/tbb_processing_pipeline.h"
+#include "pipeline/processing/processing_pipeline.h"
+#include "pipeline/processing/tbb_processing_pipeline.h"
 
 namespace fq::statistic {
 

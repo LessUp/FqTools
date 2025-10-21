@@ -33,8 +33,8 @@ namespace fq::cli {
  * @return 程序执行状态码，0 表示成功，非0表示异常
  */
 auto main(int argc, char* argv[]) -> int {
-    // 打印项目 Logo
-    fq::common::print_big_logo();
+    // 打印项目 Logo（来自 legacy 实现）
+    ::print_big_logo();
     // 输出软件信息
     fq::common::software_info("FastQTools");
     // 启动主计时器

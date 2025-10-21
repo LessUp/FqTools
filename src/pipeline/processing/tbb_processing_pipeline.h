@@ -1,7 +1,7 @@
 #pragma once
 
-#include "processing/processing_pipeline.h"
-#include "memory/batch_memory_manager.h"
+#include "pipeline/processing/processing_pipeline.h"
+#include "pipeline/memory/batch_memory_manager.h"
 #include <memory>
 #include <tbb/parallel_pipeline.h>
 

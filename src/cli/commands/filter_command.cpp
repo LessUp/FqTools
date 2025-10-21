@@ -3,9 +3,9 @@
 #include <iomanip>
 #include <iostream>
 
-#include "processing/mutators/quality_trimmer.h"
-#include "processing/predicates/min_quality_predicate.h"
-#include "processing/processing_pipeline.h"  // Add full definition for ProcessingStatistics
+#include "pipeline/processing/mutators/quality_trimmer.h"
+#include "pipeline/processing/predicates/min_quality_predicate.h"
+#include "pipeline/processing/processing_pipeline.h"  // Add full definition for ProcessingStatistics
 #include <cxxopts.hpp>
 #include <fqtools/processing_pipeline.h>  // public API for interface
 

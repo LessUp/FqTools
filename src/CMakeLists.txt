@@ -1,5 +1,7 @@
 # Add the new C++20 modules
 add_subdirectory(modules)
+# New pipeline directory (migrated from modules/pipeline)
+add_subdirectory(pipeline)
 
 # Add the command line interface library
 add_subdirectory(cli)
@@ -36,21 +38,21 @@ target_link_libraries(fq_legacy_lib
 add_library(fq_lib INTERFACE)
 
 target_link_libraries(fq_lib 
-    INTERFACE 
-        fq_config  # This transitively links fq_error and fq_common
-        fq_common
-        fq_error
-        fq_core
-        fq_io
-        fq_fastq
-        fq_legacy_lib
-        fq_pipeline
-        fmt::fmt  # Add explicit fmt linking
+INTERFACE 
+fq_config  # This transitively links fq_error and fq_common
+fq_common
+fq_error
+fq_core
+fq_io
+fq_fastq
+fq_legacy_lib
+fq_pipeline
+fmt::fmt  # Add explicit fmt linking
 )
 
 target_include_directories(fq_lib
-    INTERFACE
-        ${CMAKE_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/src
-        ${CMAKE_SOURCE_DIR}/src/modules/pipeline
+INTERFACE
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/src
+${CMAKE_SOURCE_DIR}/src/pipeline
 )

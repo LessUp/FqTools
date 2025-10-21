@@ -8,8 +8,8 @@
  * @copyright Copyright (c) 2025 FastQTools
  */
 
-#include "processing/tbb_processing_pipeline.h"
-#include "processing/i_read_processor.h"
+#include "pipeline/processing/tbb_processing_pipeline.h"
+#include "pipeline/processing/i_read_processor.h"
 #include "core_legacy/core.h"
 #include <iostream>
 #include <chrono>

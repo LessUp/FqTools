@@ -1,5 +1,5 @@
-#include "processing/processing_pipeline.h"
-#include "processing/i_read_processor.h"
+#include "pipeline/processing/processing_pipeline.h"
+#include "pipeline/processing/i_read_processor.h"
 #include "core_legacy/core.h"
 #include <iostream>
 #include <tbb/parallel_pipeline.h>

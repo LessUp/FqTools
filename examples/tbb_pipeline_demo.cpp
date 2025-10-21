@@ -1,5 +1,5 @@
 #include <fqtools/processing_pipeline.h>
-#include "processing/tbb_processing_pipeline.h"
+#include "pipeline/processing/tbb_processing_pipeline.h"
 #include "core_legacy/core.h"
 #include <iostream>
 #include <chrono>
